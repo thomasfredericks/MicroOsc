@@ -14,6 +14,7 @@
 // ======================
 // Change sendPort to target port
 // Change sendIp to ip of target device
+// Set Serial baud for monitoring to 115200
 
 // Load Wi-Fi library
 #include <WiFi.h>
@@ -21,6 +22,10 @@
 
 #include "WiFiConnect.h"
 WiFiConnect wifiConnect;
+
+// Access to mDNS related functionalities
+#include <ESPmDNS.h>
+
 
 #include <WiFiUdp.h>
 WiFiUDP udp;
@@ -77,6 +82,9 @@ void setup() {
   Serial.println("DEBUG Starting WiFi");
   startWiFi();
 
+  if (!MDNS.begin("esp32")) {
+    Serial.println("DEBUG Error starting mDNS esp32");
+  }
 
   udp.begin(receivePort);
 
@@ -111,30 +119,30 @@ void receivedOscMessage( MicroOscMessage& message) {
     if ( blob != NULL && length != 0) {
       oscUdp.sendMessage( "/test/b", "b", length, blob);
       Serial.print("DEBUG /test/b ");
-      for ( int i =0; i < length; i++ ) {
+      for ( int i = 0; i < length; i++ ) {
         Serial.print(blob[i]);
       }
       Serial.println();
     }
-    
+
   } else if ( message.fullMatch("/test/s",  "s")) {
     const char * s = message.getNextString();
     oscUdp.sendMessage( "/test/s",  "s",  s);
     Serial.print("DEBUG /test/s ");
     Serial.println(s);
-    
+
   } else if ( message.fullMatch("/test/m", "m")) {
     const uint8_t* midi;
     message.getNextMidi(&midi);
     if ( midi != NULL ) {
       oscUdp.sendMessage( "/test/m",  "m", midi);
       Serial.print("DEBUG /test/m ");
-      for ( int i =0; i < 4; i++ ) {
+      for ( int i = 0; i < 4; i++ ) {
         Serial.print(midi[i]);
       }
       Serial.println();
     }
-    
+
   }
 
 }

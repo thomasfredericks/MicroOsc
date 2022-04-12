@@ -16,6 +16,8 @@
 // Load Wi-Fi library
 #include <WiFi.h>
 
+// Access to mDNS related functionalities
+#include <ESPmDNS.h>
 
 #include "WiFiConnect.h"
 WiFiConnect wifiConnect;
@@ -67,11 +69,14 @@ void startWiFi() {
 void setup() {
 
   // INITIATE SERIAL COMMUNICATION
-   Serial.begin(115200);
+  Serial.begin(115200);
   delay(1000);
   Serial.println("DEBUG Starting WiFi");
   startWiFi();
 
+  if (!MDNS.begin("esp32")) {
+    Serial.println("DEBUG Error starting mDNS esp32");
+  }
 
   udp.begin(receivePort);
 
@@ -103,34 +108,34 @@ void setup() {
 
 void loop() {
 
-    oscUdp.sendMessage("/test/i",  "i",   (uint32_t) millis());
-    delay(1000);
+  oscUdp.sendMessage("/test/i",  "i",   (uint32_t) millis());
+  delay(1000);
 
-    oscUdp.sendMessage("/test/f",  "f",   ((float)millis()) *0.001);
-    delay(1000);
+  oscUdp.sendMessage("/test/f",  "f",   ((float)millis()) * 0.001);
+  delay(1000);
 
-    uint8_t blob[3];
-    blob[0] = millis() % 256;
-    blob[1] = (millis()+1) % 256;
-    blob[2] = (millis()+2) % 256;
-    oscUdp.sendMessage("/test/b",  "b",   3 , blob);
-    delay(1000);
+  uint8_t blob[3];
+  blob[0] = millis() % 256;
+  blob[1] = (millis() + 1) % 256;
+  blob[2] = (millis() + 2) % 256;
+  oscUdp.sendMessage("/test/b",  "b",   3 , blob);
+  delay(1000);
 
-    const char * hello = "hello";
-    oscUdp.sendMessage("/test/s",  "s",  hello);
-    delay(1000);
+  const char * hello = "hello";
+  oscUdp.sendMessage("/test/s",  "s",  hello);
+  delay(1000);
 
-   uint8_t midi[4];
-    midi[0] = millis() % 128;
-    midi[1] = (millis()+1) % 128;
-    midi[2] = (millis()+2) % 128;
-    midi[3] = (millis()+3) % 128;
-    oscUdp.sendMessage("/test/m",  "m",  midi);
-    delay(1000);
+  uint8_t midi[4];
+  midi[0] = millis() % 128;
+  midi[1] = (millis() + 1) % 128;
+  midi[2] = (millis() + 2) % 128;
+  midi[3] = (millis() + 3) % 128;
+  oscUdp.sendMessage("/test/m",  "m",  midi);
+  delay(1000);
 
 
-    oscUdp.sendMessage("/test/t",  "t",  (uint64_t)(millis()));
-    delay(1000);
-    
-   
+  oscUdp.sendMessage("/test/t",  "t",  (uint64_t)(millis()));
+  delay(1000);
+
+
 }
