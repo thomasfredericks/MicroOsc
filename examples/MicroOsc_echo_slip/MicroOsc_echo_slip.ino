@@ -16,20 +16,14 @@
 // Outgoing messages are written directly to the output and do not need more reserved bytes.
 MicroOscSlip<64> osc(&Serial);
 
-
 void setup() {
-
   // INITIATE SERIAL COMMUNICATION
   Serial.begin(115200);
-  
 }
 
-// FUNCTION THAT IS CALLED FOR EVERY RECEIVED MESSAGE.
-
+// FUNCTION THAT IS CALLED FOR EVERY RECEIVED MESSAGE
 void receivedOscMessage( MicroOscMessage & message) {
-
   // WHEN A MESSAGE IS MATCHED IT ECHOS IT THROUGH SERIAL SLIP
-
   if ( message.fullMatch("/test/i", "i") ) {
     int32_t firstArgument = message.getNextInt32();
     osc.sendMessage( "/test/i",  "i",  firstArgument);
@@ -37,7 +31,6 @@ void receivedOscMessage( MicroOscMessage & message) {
   } else if ( message.fullMatch("/test/f",  "f")) {
     float firstArgument = message.getNextFloat();
     osc.sendMessage( "/test/f",  "f",  firstArgument);
-
 
   } else if ( message.fullMatch("/test/b",  "b")) {
     const uint8_t* blob;
@@ -57,12 +50,8 @@ void receivedOscMessage( MicroOscMessage & message) {
     if ( midi != NULL ) {
       osc.sendMessage( "/test/m",  "m", midi);
     }
-    
   }
-
 }
-
-
 
 void loop() {
 
