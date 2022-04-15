@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>osc.js Web Socket Demo</title>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" type="text/css" media="all" href="osc-view.css"></link>
+
+        <script src="/node_modules/osc/dist/osc-browser.js"></script>
+        <script src="/node_modules/flocking/dist/flocking-all.min.js"></script>
+        <script src="/socket-synth.js"></script>
+    </head>
+
+    <body>
+        <h1>osc.js Web Socket Demo</h1>
+
+        <button>Start</button>
+
+        <div id="messageArea">
+            <p id="messageLabel">OSC Message:</p>
+            <pre id="message"></pre>
+        </div>
+
+        <script>
+            var socketSynth = new example.SocketSynth();
+        </script>
+    </body>
+</html>
