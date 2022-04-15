@@ -2,6 +2,7 @@
  * CONFIGURATION   *
  *******************/
 var serialPath = "COM3";
+var serialBaud = 38400;
 var wsPort = 8081;
 
 /*********************
@@ -19,7 +20,8 @@ var osc = require("osc"),
 
 // Instantiate a new OSC Serial Port.
 var serial = new osc.SerialPort({
-    devicePath: serialPath
+    devicePath: serialPath,
+	bitrate : serialBaud 
 });
 
 serial.on("message", function (oscMessage) {
@@ -94,14 +96,17 @@ SerialPort.list().then(ports => {
 });
 
 var appResources;
-
-
+var socketPort;
+var relay;
 
 function start() {
 	if ( serialPaths.includes(serialPath) ) {		
 		// Open serial port.
 		console.log("Opening serial path "+serialPath);
 		serial.open();
+		serial.on("message", function (oscMsg) {
+			console.log("An OSC message just arrived!", oscMsg);
+        });
 		// Open UDP
 		//udpPort.open();
 		// Create an Express-based Web Socket server to which OSC messages will be relayed.
@@ -116,14 +121,16 @@ function start() {
 		app.use("/", express.static(appResources));
 		wss.on("connection", function (socket) {
 			console.log("A Web Socket connection has been established!");
-			var socketPort = new osc.WebSocketPort({
+			socketPort = new osc.WebSocketPort({
 				socket: socket
 			});
 
-			var relay = new osc.Relay(serial, socketPort, {
+			relay = new osc.Relay(serial, socketPort, {
 				raw: true
 			});
 		});
+		
+
 	} else {
 		console.log("Serial path \"" +serialPath+"\" not available");
 	}

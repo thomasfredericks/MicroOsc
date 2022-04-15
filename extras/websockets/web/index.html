@@ -3,11 +3,26 @@
     <head>
         <title>osc.js Web Socket Demo</title>
         <meta charset="UTF-8" />
-        <link rel="stylesheet" type="text/css" media="all" href="osc-view.css"></link>
+		<script src="osc-browser.min.js"></script>
+        <script>
+			oscPort = new osc.WebSocketPort({
+				url: "ws://localhost:8081",
+				metadata: true
+			});
 
-        <script src="/node_modules/osc/dist/osc-browser.js"></script>
-        <script src="/node_modules/flocking/dist/flocking-all.min.js"></script>
-        <script src="/socket-synth.js"></script>
+			 oscPort.on("ready", function (msg) {
+				console.log("ready");
+			});
+			
+			oscPort.on("message", function (msg) {
+				console.log("message", msg);
+			});
+			oscPort.on("close", function (msg) {
+				console.log("message", msg);
+			});
+			
+			oscPort.open();
+        </script>
     </head>
 
     <body>
@@ -20,8 +35,6 @@
             <pre id="message"></pre>
         </div>
 
-        <script>
-            var socketSynth = new example.SocketSynth();
-        </script>
+
     </body>
 </html>
