@@ -1,15 +1,15 @@
 /*******************
  * CONFIGURATION   *
  *******************/
-var serialPath = "COM3";
-var serialBaud = 38400;
-var wsPort = 8081;
+let serialPath = "COM3";
+let serialBaud = 38400;
+let wsPort = 8081;
 
 /*********************
  * CODE FROM HERE ON *
  *********************/
 const SerialPort = require('serialport');
-var osc = require("osc"),
+let osc = require("osc"),
     express = require("express"),
     WebSocket = require("ws");
 
@@ -19,16 +19,19 @@ var osc = require("osc"),
  *******************/
 
 // Instantiate a new OSC Serial Port.
-var serial = new osc.SerialPort({
+let serial = new osc.SerialPort({
     devicePath: serialPath,
-	bitrate : serialBaud 
+	bitrate : serialBaud,
+    metadata: true	
 });
 
 serial.on("message", function (oscMessage) {
     console.log(oscMessage);
 });
 
-
+serial.on("error", function (errorMsg) {
+	console.log(errorMsg);
+});
 
 
 /****************
@@ -77,7 +80,7 @@ udpPort.on("error", function (err) {
 });
 */
 
-var serialPaths = [];
+let serialPaths = [];
 
 
 
@@ -95,9 +98,9 @@ SerialPort.list().then(ports => {
 	start();
 });
 
-var appResources;
-var socketPort;
-var relay;
+let appResources;
+let socketPort;
+let relay;
 
 function start() {
 	if ( serialPaths.includes(serialPath) ) {		
@@ -122,7 +125,8 @@ function start() {
 		wss.on("connection", function (socket) {
 			console.log("A Web Socket connection has been established!");
 			socketPort = new osc.WebSocketPort({
-				socket: socket
+				socket: socket,
+				metadata: true	
 			});
 
 			relay = new osc.Relay(serial, socketPort, {

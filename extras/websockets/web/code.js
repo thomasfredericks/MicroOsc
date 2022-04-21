@@ -25,9 +25,10 @@ oscSocket = new osc.WebSocketPort({
 // ON WEBSOCKET MESSAGE
 oscSocket.on("message", function (msg) {
 	//console.log("message", msg);
-	let address = oscMessage.address;
-	let firstArgumentType = oscMessage.args[0].type;
-    let firstArgumentValue = oscMessage.args[0].value;
+	let address = msg.address;
+	let firstArgumentType = msg.args[0].type;
+    let firstArgumentValue = msg.args[0].value;
+	
 	if ( address == "/ms" ) {
 		messageText.innerText  = "/ms "+firstArgumentValue;
 	}
