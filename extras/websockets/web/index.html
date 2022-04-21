@@ -1,40 +1,20 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>osc.js Web Socket Demo</title>
+        <title>MicroOSC to osc.js Web Socket Demo</title>
         <meta charset="UTF-8" />
 		<script src="osc-browser.min.js"></script>
-        <script>
-			oscPort = new osc.WebSocketPort({
-				url: "ws://localhost:8081",
-				metadata: true
-			});
-
-			 oscPort.on("ready", function (msg) {
-				console.log("ready");
-			});
-			
-			oscPort.on("message", function (msg) {
-				console.log("message", msg);
-			});
-			oscPort.on("close", function (msg) {
-				console.log("message", msg);
-			});
-			
-			oscPort.open();
-        </script>
+        <script src="code.js"></script>
     </head>
 
     <body>
-        <h1>osc.js Web Socket Demo</h1>
-
-        <button>Start</button>
-
-        <div id="messageArea">
-            <p id="messageLabel">OSC Message:</p>
-            <pre id="message"></pre>
-        </div>
-
-
+        
+         <div style="margin: 50px auto; text-align: center; box-sizing: border-box;">
+		 <h1>MicroOSC to osc.js Web Socket Demo</h1>
+		  <img src="lightoff.png" id="light" width="265" height="400">	  
+		  <div id="messageArea">
+            <p id="messageText">Not connected</p>
+          </div>
+		</div>
     </body>
 </html>
