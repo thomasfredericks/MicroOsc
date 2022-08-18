@@ -89,7 +89,7 @@ size_t MicroOsc::vprint(Print* output, const char *address, const char *format, 
 	  
     switch (format[j]) {
 	  case 'i': {
-		const int32_t  v = va_arg(ap, int);
+		const int32_t  v = va_arg(ap, int32_t);
         int32_t v32 = uOsc_bigEndian(v);
        //int32_t v32 = htonl(v);
         uint8_t * ptr = (uint8_t *) &v32;
@@ -103,7 +103,7 @@ size_t MicroOsc::vprint(Print* output, const char *address, const char *format, 
         break;
       }
       case 'b': {
-        const int n = va_arg(ap, int); // length of blob
+        const int32_t n = va_arg(ap, int32_t); // length of blob
         
         uint32_t n32 = uOsc_bigEndian(n);
         uint8_t * ptr = (uint8_t *) &n32;
