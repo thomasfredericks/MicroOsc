@@ -20,8 +20,8 @@
                    ((x)>> 8 & 0x0000FF00UL) | \
                    ((x)>>24 & 0x000000FFUL) )
 #endif
-
 */
+
 
 /*
  based on http://stackoverflow.com/questions/809902/64-bit-ntohl-in-c
@@ -52,54 +52,64 @@ static inline T uOsc_bigEndian(const T& x)
 
 #include "MicroOsc.h"
 
+inline size_t MicroOsc::padTheSize(Print* output, size_t i) {
+  while ( (i % 4 ) ) {
+      output->write(nullChar);
+      i++; 
+  }
+  return i;
+}
+
+size_t MicroOsc::writeAddress(Print* output,const char *address) {
+     
+  
+  output->print(address);
+  output->write(nullChar);
+  size_t i = strlen(address)+1;
+
+  // pad the size
+  i = padTheSize(output,i);
+  return i;
+}
+
+size_t MicroOsc::writeFormat(Print* output,const char *format) {
+  output->write(',');
+  size_t i = 1;  
+  output->print(format);
+  output->write(nullChar);
+  i += strlen(format) + 1;
+
+  // pad the size
+  i = padTheSize(output,i);
+  return i;
+}
+
+size_t MicroOsc::writeInt(Print* output,int32_t int32) {
+  int32_t networkInt32 = uOsc_bigEndian(int32);
+       //int32_t v32 = htonl(v);
+      uint8_t * ptr = (uint8_t *) &networkInt32;
+       output->write(ptr, 4);
+       return 4;
+}
 
 size_t MicroOsc::vprint(Print* output, const char *address, const char *format, va_list ap) {
   
-  uint8_t nullChar = '\0';
-
-  size_t i = strlen(address);
+  size_t i = 0;
   if (address == NULL ) return -1;
-  output->print(address);
-  output->write(nullChar);
-  i++; 
-
-  // pad the size
-  while ( (i % 4 ) ) {
-      output->write(nullChar);
-      i++; 
-  }
-  
-  output->write(',');
-  i++; 
-
-  size_t s_len = strlen(format);
   if (format == NULL ) return -2;
-  output->print(format);
-  output->write(nullChar);
-  i += s_len + 1;
 
-   // pad the size
-  while ( (i % 4 ) ) {
-      output->write(nullChar);
-      i++; 
-  }
-
+  i += writeAddress(output, address);
+  
+  i += writeFormat(output, format);
+  
 
   for (int j = 0; format[j] != '\0'; ++j) {
 	  
     switch (format[j]) {
 	  case 'i': {
-		const int32_t  v = va_arg(ap, int32_t);
-        int32_t v32 = uOsc_bigEndian(v);
-       //int32_t v32 = htonl(v);
-        uint8_t * ptr = (uint8_t *) &v32;
-       output->write(ptr, 4);
-       i+=4;
-       //Serial.println();
-       //  Serial.print(" ");
-        //    Serial.println(v32);
-        //    Serial.print("v32 ");
-        //    Serial.println(v32);
+		const int32_t  int32 = va_arg(ap, int32_t);
+        i += writeInt(output,int32);
+
         break;
       }
       case 'b': {
@@ -119,7 +129,7 @@ size_t MicroOsc::vprint(Print* output, const char *address, const char *format, 
 	  
       case 's': {
         const char *str = (const char *) va_arg(ap, void *);
-        s_len = strlen(str);
+        size_t s_len = strlen(str);
         output->print(str);
           output->write(nullChar);
          i += s_len + 1;
@@ -174,6 +184,7 @@ size_t MicroOsc::vprint(Print* output, const char *address, const char *format, 
 		output->write(nullChar);
 		i++; 
 	}
+
   }
 
   return i; // return the total number of bytes written

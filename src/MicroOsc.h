@@ -106,6 +106,8 @@ class MicroOsc
  */
 void parseMessages(tOscCallbackFunction callback , unsigned char *buffer, const size_t len);
 
+
+
  private:
      	unsigned char *buffer;
      	//int len;
@@ -116,6 +118,7 @@ void parseMessages(tOscCallbackFunction callback , unsigned char *buffer, const 
      	tOscCallbackFunction callback;
      	uint64_t timetag;
      	bool isPartOfABundle;
+		uint8_t nullChar = '\0';
 
 
 uint64_t parseBundleTimeTag();
@@ -144,7 +147,10 @@ bool isABundle(const unsigned char  *buffer);
 bool getNextMessage();
 
 protected :
-
+inline size_t padTheSize(Print* output, size_t i);
+size_t writeAddress(Print* output, const char *address);
+size_t writeFormat(Print* output, const char *format);
+size_t writeInt(Print* output, int32_t i);
 size_t vprint(Print* output, const char *address, const char *format, va_list ap);
 
 

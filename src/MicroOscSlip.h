@@ -16,6 +16,15 @@
 #define SLIP_ESC_ESC 0xDD
 
 
+class OscInt {
+	char type = 'i';
+	int32_t value;
+	public:
+	OscInt(int32_t i) : value{ i } {
+	
+	}
+};
+
 
 class MicroSlip : public Print  {
 
@@ -149,7 +158,19 @@ class MicroOscSlip : public MicroOsc {
       va_end(ap);
       slip.endPacket(); 
     }
-
+    
+	void sendMessage2(const char *address, ...) {
+		
+		 slip.beginPacket();
+		 /*
+         va_list ap;
+         va_start(ap, address);
+        vprint(&slip, address, format, ap);
+        va_end(ap);
+		*/
+        slip.endPacket(); 
+		
+	}
 
 
 };
