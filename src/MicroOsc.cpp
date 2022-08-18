@@ -1,17 +1,6 @@
-/**
- * Copyright (c) 2015-2018, Martin Roth (mhroth@gmail.com)
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+/* MicroOsc
+ * By Thomas O Fredericks (tof@tofstuff.com) 
+ * Inspired by TinyOsc https://github.com/mhroth/TinyOsc by Martin Roth (mhroth@gmail.com)
  */
 
 #include <stddef.h>
@@ -24,6 +13,15 @@
 
 
 #include "Arduino.h"
+/*
+#ifndef htonl
+#define htonl(x) ( ((x)<<24 & 0xFF000000UL) | \
+                   ((x)<< 8 & 0x00FF0000UL) | \
+                   ((x)>> 8 & 0x0000FF00UL) | \
+                   ((x)>>24 & 0x000000FFUL) )
+#endif
+
+*/
 
 /*
  based on http://stackoverflow.com/questions/809902/64-bit-ntohl-in-c
@@ -91,11 +89,17 @@ size_t MicroOsc::vprint(Print* output, const char *address, const char *format, 
 	  
     switch (format[j]) {
 	  case 'i': {
-		const uint32_t  v = (uint32_t ) va_arg(ap, int);
-        uint32_t v32 = uOsc_bigEndian(v);
+		const int32_t  v = va_arg(ap, int);
+        int32_t v32 = uOsc_bigEndian(v);
+       //int32_t v32 = htonl(v);
         uint8_t * ptr = (uint8_t *) &v32;
-        output->write(ptr, sizeof(uint32_t));
-        i+=sizeof(uint32_t);
+       output->write(ptr, 4);
+       i+=4;
+       //Serial.println();
+       //  Serial.print(" ");
+        //    Serial.println(v32);
+        //    Serial.print("v32 ");
+        //    Serial.println(v32);
         break;
       }
       case 'b': {
@@ -127,8 +131,8 @@ size_t MicroOsc::vprint(Print* output, const char *address, const char *format, 
         float v = d; // use float as double might be 64 bytes
         float v32 = uOsc_bigEndian(v);
         uint8_t * ptr = (uint8_t *) &v32;
-        output->write(ptr, sizeof(float));
-        i+=sizeof(float);
+        output->write(ptr, 4);
+        i+=4;
         break;
       }        
 
@@ -281,24 +285,14 @@ bool MicroOsc::getNextMessage() {
 
 
 
-
-//    _______ _              ____           __  __                                
-//   |__   __(_)            / __ \         |  \/  |                               
-//      | |   _ _ __  _   _| |  | |___  ___| \  / | ___  ___ ___  __ _  __ _  ___ 
-//      | |  | | '_ \| | | | |  | / __|/ __| |\/| |/ _ \/ __/ __|/ _` |/ _` |/ _ \
-//      | |  | | | | | |_| | |__| \__ \ (__| |  | |  __/\__ \__ \ (_| | (_| |  __/
-//      |_|  |_|_| |_|\__, |\____/|___/\___|_|  |_|\___||___/___/\__,_|\__, |\___|
-//                     __/ |                                            __/ |     
-//                    |___/                                            |___/      
-
 MicroOscMessage::MicroOscMessage() {
 
 }
 
 int32_t MicroOscMessage::getNextInt32() {
   // convert from big-endian (network btye order)
-  const uint32_t iBE = *((uint32_t *) marker);
-  const uint32_t i  = uOsc_bigEndian(iBE);
+  const int32_t iBE = *((int32_t *) marker);
+  const int32_t i  = uOsc_bigEndian(iBE);
   
   marker += 4;
   return i;
@@ -334,7 +328,7 @@ bool MicroOscMessage::fullMatch(const char* address, const char * typetags){
    return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
 }
 
-void MicroOscMessage::getNextBlob( const unsigned char  **blob, size_t *bloblen) {
+void MicroOscMessage::getNextBlob( const unsigned char  **blob, uint32_t *bloblen) {
 
   const uint32_t iBE = *((uint32_t *) marker);
   uint32_t i  = uOsc_bigEndian(iBE);

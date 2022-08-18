@@ -1,6 +1,11 @@
+/* MicroOscSlip
+ * By Thomas O Fredericks (tof@tofstuff.com) 
+ */
+
+#ifndef _MICRO_OSC_SLIP_
+#define _MICRO_OSC_SLIP_
 
 #include <MicroOsc.h>
-
 #include "Print.h"
 
 // Internal-> SLIP reserved codes->
@@ -148,3 +153,5 @@ class MicroOscSlip : public MicroOsc {
 
 
 };
+
+#endif // _MICRO_OSC_SLIP_

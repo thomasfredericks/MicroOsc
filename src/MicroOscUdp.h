@@ -1,6 +1,12 @@
+/* MicroOscUdp
+ * By Thomas O Fredericks (tof@tofstuff.com) 
+ */
+
+#ifndef _MICRO_OSC_UDP_
+#define _MICRO_OSC_UDP_
+
 #include <MicroOsc.h>
 #include <Udp.h>
-
 
 
 template <const size_t MICRO_OSC_IN_SIZE>
@@ -51,3 +57,5 @@ class MicroOscUdp : public MicroOsc {
 
 
 };
+
+#endif // _MICRO_OSC_UDP_

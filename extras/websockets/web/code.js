@@ -11,7 +11,7 @@ let light;
 let webSocketConnected = false;
 
 oscSocket = new osc.WebSocketPort({
-				url: "ws://localhost:8081",
+				url: "ws://localhost:8000",
 				metadata: true
 			});
 
@@ -24,7 +24,7 @@ oscSocket = new osc.WebSocketPort({
 
 // ON WEBSOCKET MESSAGE
 oscSocket.on("message", function (msg) {
-	//console.log("message", msg);
+	console.log("message", msg);
 	let address = msg.address;
 	let firstArgumentType = msg.args[0].type;
     let firstArgumentValue = msg.args[0].value;

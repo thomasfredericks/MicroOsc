@@ -1,50 +1,29 @@
-/**
+/* MicroOsc
  * By Thomas O Fredericks (tof@tofstuff.com) 
- * Base on TinyOsc by :
- * Copyright (c) 2015-2018, Martin Roth (mhroth@gmail.com)
- * https://github.com/mhroth/TinyOsc
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
- * REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
- * AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
- * INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
- * LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
- * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
- * PERFORMANCE OF THIS SOFTWARE.
+ * Inspired by TinyOsc https://github.com/mhroth/TinyOsc by Martin Roth (mhroth@gmail.com)
  */
 
-#ifndef _TINY_OSC_
-#define _TINY_OSC_
+#ifndef _MICRO_OSC_
+#define _MICRO_OSC_
 
 #include <stdbool.h>
 #include <stdint.h>
 
 #include "Print.h"
 
-/*
-#ifdef __cplusplus
-extern "C" {
-#endif
-*/
 
 //#define MICRO_OSC_DEBUG
 
-
-typedef struct tosc_bundle {
+typedef struct uOscBundle {
   unsigned char* marker; // the current write head (where the next message will be written)
   unsigned char* buffer; // the original buffer
   size_t bufLen; // the byte length of the original buffer
   size_t bundleLen; // the byte length of the total bundle
-} tosc_bundle;
+} uOscBundle;
+
 
 class MicroOscMessage {
     
-
-
 
 	public:
 
@@ -89,7 +68,7 @@ class MicroOscMessage {
 	 * Returns a pointer to the blob data. Returns NULL if the OSC buffer bounds are exceeded.
 	 * Sets the value of the len pointer to the length of the blob. Set to 0 if the OSC buffer bounds are exceeded.
 	 */
-	void getNextBlob(const uint8_t **blobData, size_t *len);
+	void getNextBlob(const uint8_t **blobData, uint32_t *len);
 
 	
 	/**
@@ -130,8 +109,8 @@ void parseMessages(tOscCallbackFunction callback , unsigned char *buffer, const 
  private:
      	unsigned char *buffer;
      	//int len;
-     	tosc_bundle bundle;
-     	//tosc_bundle* b;
+     	uOscBundle bundle;
+     	//uOscBundle* b;
      	//tosc_message* o;
      	MicroOscMessage message;
      	tOscCallbackFunction callback;
@@ -193,6 +172,4 @@ void writeMessage(Print *output, const char *address, const char *fmt, ...);
 
 
 
-
-
-#endif // _TINY_OSC_
+#endif // _MICRO_OSC_

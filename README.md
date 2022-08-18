@@ -1,12 +1,12 @@
 # MicroOsc
 
-MicroOsc is a minimal [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for Arduino. It is based on TinyOSC by Martin Roth (https://github.com/mhroth/TinyOSC). Given the limited nature of the library it also tends to be quite fast. It doesn't hold on to much state and it doesn't do much error checking. If you have a good idea of what OSC packets you will receive and need to process them quickly, this library might be for you.
+MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for Arduino. It is inspired on TinyOSC by Martin Roth (https://github.com/mhroth/TinyOSC). It doesn't hold on to state and error checking is minimal.
 
 ## Supported Features
-Due to its *micro* nature, MicroOsc does not support all standard OSC features. Currently it supports:
+Currently MicroOsc supports:
 * message parsing
 * message writing
-* bundle parsing
+* bundle parsing as individual messages
 * Send Types
   * `b`: binary blob
   * `f`: float
@@ -27,8 +27,8 @@ Due to its *micro* nature, MicroOsc does not support all standard OSC features. 
   * `s`: string
   * `m`: midi
 
-
-It does not support:
+## Unsupported Features
+Currently MicroOsc does not support:
 * ~~bundle writing~~
 * ~~timetags~~
 * ~~matching~~
