@@ -17,8 +17,16 @@ class MicroOscUdp : public MicroOsc {
     IPAddress destinationIp;
     unsigned int destinationPort;
 
+    protected:
+	void beginMessage() {
+		udp->beginPacket(destinationIp, destinationPort);
+	}
+	void endMessage() {
+		 udp->endPacket(); 
+	}
+
   public:
-    MicroOscUdp(UDP * udp, IPAddress destinationIp, unsigned int destinationPort) {
+    MicroOscUdp(UDP * udp, IPAddress destinationIp, unsigned int destinationPort) : MicroOsc(udp) {
     	this->udp = udp;
 		this->destinationIp = destinationIp;
 		this->destinationPort = destinationPort;
@@ -39,16 +47,16 @@ class MicroOscUdp : public MicroOsc {
       }
 
     }
-
+/*
     void sendMessage(const char *address, const char *format,...) {
       udp->beginPacket(destinationIp, destinationPort);
       va_list ap;
       va_start(ap, format);
-      vprint(udp, address, format, ap);
+      vprint( address, format, ap);
       va_end(ap);
       udp->endPacket(); 
     }
-
+*/
     void setDestination(IPAddress destinationIp, unsigned int destinationPort) {
       this->destinationIp = destinationIp;
       this->destinationPort = destinationPort;

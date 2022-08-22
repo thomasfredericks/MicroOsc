@@ -20,14 +20,14 @@ getAddress	KEYWORD2
 getFormat	KEYWORD2
 parse	KEYWORD2
 writeMessage	KEYWORD2
-getNextInt32	KEYWORD2
-getNextInt64	KEYWORD2
+nextAsInt	KEYWORD2
+getnextAsInt64	KEYWORD2
 getNextTimetag	KEYWORD2
-getNextFloat	KEYWORD2
+nextAsFloat	KEYWORD2
 getNextDouble	KEYWORD2
-getNextString	KEYWORD2
-getNextBlob	KEYWORD2
-getNextMidi	KEYWORD2
+nextAsString	KEYWORD2
+nextAsBlob	KEYWORD2
+nextAsMidi	KEYWORD2
 
 #######################################
 # Instances (KEYWORD2)

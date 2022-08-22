@@ -134,10 +134,16 @@ class MicroOscSlip : public MicroOsc {
     MicroSlip slip;
     unsigned char inputBuffer[MICRO_OSC_IN_SIZE];
 	
-	
+	protected:
+	void beginMessage() {
+		slip.beginPacket();
+	}
+	void endMessage() {
+		slip.endPacket(); 
+	}
 
   public:
-    MicroOscSlip(Stream * stream) : slip(stream) {
+    MicroOscSlip(Stream * stream) : MicroOsc(stream), slip(stream) {
 
     }
 
@@ -149,29 +155,32 @@ class MicroOscSlip : public MicroOsc {
       }
 
     }
-
+/*
     void sendMessage(const char *address, const char *format, ...) {
-      slip.beginPacket();
+      
       va_list ap;
       va_start(ap, format);
-      vprint(&slip, address, format, ap);
+      vprint(address, format, ap);
       va_end(ap);
-      slip.endPacket(); 
+      
     }
-    
+*/
+	
+    /*
 	void sendMessage2(const char *address, ...) {
 		
 		 slip.beginPacket();
-		 /*
+		 
          va_list ap;
          va_start(ap, address);
+
         vprint(&slip, address, format, ap);
         va_end(ap);
-		*/
+		
         slip.endPacket(); 
 		
 	}
-
+*/
 
 };
 

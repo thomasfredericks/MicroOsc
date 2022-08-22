@@ -100,24 +100,23 @@ void receivedOscMessage( MicroOscMessage& message) {
   // WHEN A MESSAGE IS MATCHED IT ECHOS IT THROUGH SERIAL(ASCII) AND UDP
 
   if ( message.fullMatch("/test/i", "i") ) {
-    int32_t firstArgument = message.getNextInt32();
+    int32_t firstArgument = message.nextAsInt();
 
     oscUdp.sendMessage( "/test/i",  "i",  firstArgument);
     Serial.print("DEBUG /test/i ");
     Serial.println(firstArgument);
 
   } else if ( message.fullMatch("/test/f",  "f")) {
-    float firstArgument = message.getNextFloat();
+    float firstArgument = message.nextAsFloat();
     oscUdp.sendMessage( "/test/f",  "f",  firstArgument);
     Serial.print("DEBUG /test/f ");
     Serial.println(firstArgument);
 
   } else if ( message.fullMatch("/test/b",  "b")) {
     const uint8_t* blob;
-    size_t length;
-    message.getNextBlob(&blob, &length);
-    if ( blob != NULL && length != 0) {
-      oscUdp.sendMessage( "/test/b", "b", length, blob);
+    uint32_t length = message.nextAsBlob(&blob);
+    if ( length != 0) {
+      oscUdp.sendMessage( "/test/b", "b", blob, length);
       Serial.print("DEBUG /test/b ");
       for ( int i = 0; i < length; i++ ) {
         Serial.print(blob[i]);
@@ -126,14 +125,14 @@ void receivedOscMessage( MicroOscMessage& message) {
     }
 
   } else if ( message.fullMatch("/test/s",  "s")) {
-    const char * s = message.getNextString();
+    const char * s = message.nextAsString();
     oscUdp.sendMessage( "/test/s",  "s",  s);
     Serial.print("DEBUG /test/s ");
     Serial.println(s);
 
   } else if ( message.fullMatch("/test/m", "m")) {
     const uint8_t* midi;
-    message.getNextMidi(&midi);
+    message.nextAsMidi(&midi);
     if ( midi != NULL ) {
       oscUdp.sendMessage( "/test/m",  "m", midi);
       Serial.print("DEBUG /test/m ");

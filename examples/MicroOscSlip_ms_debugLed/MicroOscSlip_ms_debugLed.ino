@@ -1,7 +1,9 @@
 // DESCRIPTION
 // ==================
-// - When OSC message "/debugLed" is received, it turns on or off the debug LED depending on the uint32_t value.
 // - Sends OSC message "/ms" followed by the uint32_t value of millis() every second.
+//
+// - When OSC message "/debugLed" is received, it turns on or off the debug LED depending on the uint32_t value.
+
 
 // HARDWARE REQUIREMENTS
 // ==================
@@ -13,7 +15,7 @@
 
 // REQUIRED CONFIGURATION
 // ======================
-// - Make sure serial baud is 38400.
+// - Make sure serial baud is 115200.
 // - If your board does not have a debug LED, select a pin and and one (with a current limiting resistor).
 
 const int debugLedPin = 13;
@@ -29,7 +31,7 @@ MicroOscSlip<32> osc(&Serial);
 
 void setup() {
   // INITIATE SERIAL COMMUNICATION.
-  Serial.begin(38400);
+  Serial.begin(115200);
   delay(1000);
 
   pinMode(debugLedPin , OUTPUT);
@@ -38,8 +40,9 @@ void setup() {
 // FUNCTION THAT IS SET TO BE CALLED WHEN A MESSAGE IS RECEIVED.
 void receivedOscMessage( MicroOscMessage & message) {
   if ( message.fullMatch("/debugLed", "i") ) {
-    int32_t firstArgument = message.getNextInt32();
-    digitalWrite(debugLedPin, firstArgument);
+    int32_t i = message.nextAsInt();
+    if ( i == 0 ) digitalWrite(debugLedPin, LOW);
+    else digitalWrite(debugLedPin, HIGH);
   }
 }
 
@@ -50,7 +53,7 @@ void loop() {
   unsigned long now = millis();
   if ( now - lastTimeMessageWasSent > 1000 ) {
     lastTimeMessageWasSent = now;
-    osc.sendMessage("/ms",  "i",  (int32_t) millis());
+    osc.sendInt("/ms",  millis());
   }
 
 }

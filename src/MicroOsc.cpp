@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <Udp.h>
 
-#define MicroOsc_TIMETAG_IMMEDIATELY 1L
+#define OSC_TIMETAG_IMMEDIATELY 1L
 
 
 #include "Arduino.h"
@@ -46,208 +46,216 @@ static inline T uOsc_bigEndian(const T& x)
 }
 
 
-
-
-
-
 #include "MicroOsc.h"
 
-inline size_t MicroOsc::padTheSize(Print* output, size_t i) {
-  while ( (i % 4 ) ) {
+void MicroOsc::padTheSize() {
+  while ( (outputWritten % 4 ) ) {
       output->write(nullChar);
-      i++; 
+      outputWritten++; 
   }
-  return i;
 }
 
-size_t MicroOsc::writeAddress(Print* output,const char *address) {
-     
-  
+void MicroOsc::writeAddress(const char *address) {
+
+  outputWritten = 0;
+    
   output->print(address);
   output->write(nullChar);
-  size_t i = strlen(address)+1;
-
+  outputWritten += strlen(address)+1;
   // pad the size
-  i = padTheSize(output,i);
-  return i;
+  padTheSize();
+  
 }
 
-size_t MicroOsc::writeFormat(Print* output,const char *format) {
+void MicroOsc::writeFormat(const char *format) {
   output->write(',');
-  size_t i = 1;  
   output->print(format);
   output->write(nullChar);
-  i += strlen(format) + 1;
+  outputWritten += strlen(format) + 2;
 
   // pad the size
-  i = padTheSize(output,i);
-  return i;
+  padTheSize();
+
 }
 
-size_t MicroOsc::writeInt(Print* output,int32_t int32) {
+void MicroOsc::writeInt(int32_t int32) {
   int32_t networkInt32 = uOsc_bigEndian(int32);
-       //int32_t v32 = htonl(v);
-      uint8_t * ptr = (uint8_t *) &networkInt32;
-       output->write(ptr, 4);
-       return 4;
+  //int32_t v32 = htonl(v);
+  uint8_t * ptr = (uint8_t *) &networkInt32;
+  output->write(ptr, 4);
+  outputWritten += 4;
 }
 
-size_t MicroOsc::vprint(Print* output, const char *address, const char *format, va_list ap) {
-  
-  size_t i = 0;
-  if (address == NULL ) return -1;
-  if (format == NULL ) return -2;
+void MicroOsc::writeFloat(float f) {
+  float v32 = uOsc_bigEndian(f);
+  uint8_t * ptr = (uint8_t *) &v32;
+  output->write(ptr, 4);
+  outputWritten += 4;
+}
 
-  i += writeAddress(output, address);
-  
-  i += writeFormat(output, format);
-  
+void MicroOsc::writeDouble(double d) {
+ double v64 = uOsc_bigEndian(d);
+ uint8_t * ptr = (uint8_t *) &v64;
+output->write(ptr, sizeof(double));
+ outputWritten += sizeof(double);
+}
 
+void MicroOsc::writeString(const char *str){
+  
+  output->print(str);
+  output->write(nullChar);
+  outputWritten += strlen(str) + 1;
+  // pad the size
+  padTheSize();
+
+}
+
+void MicroOsc::writeBlob( unsigned char *b, int32_t length) {
+  // Replace following three lines with writeInt
+  uint32_t n32 = uOsc_bigEndian(length);
+  uint8_t * ptr = (uint8_t *) &n32;
+  output->write(ptr, 4);
+  output->write(b, length);
+  outputWritten += (4 + length);
+  // pad the size
+  padTheSize();
+}
+void MicroOsc::writeMidi(unsigned char *midi) {
+ output->write(midi, 4);
+ outputWritten += 4;
+}
+
+void MicroOsc::writeInt64(uint64_t h) {
+ const uint64_t tBE = uOsc_bigEndian(h);
+  uint8_t * ptr = (uint8_t *) &tBE;
+  output->write(ptr, 8);
+  outputWritten += 8;
+}
+
+
+
+
+void MicroOsc::writeMessage( const char *address, const char *format, va_list ap) {
+  
+  writeAddress( address);
+  
+  writeFormat( format);
+  
   for (int j = 0; format[j] != '\0'; ++j) {
 	  
     switch (format[j]) {
 	  case 'i': {
 		const int32_t  int32 = va_arg(ap, int32_t);
-        i += writeInt(output,int32);
-
+        writeInt(int32);
         break;
       }
       case 'b': {
-        const int32_t n = va_arg(ap, int32_t); // length of blob
         
-        uint32_t n32 = uOsc_bigEndian(n);
-        uint8_t * ptr = (uint8_t *) &n32;
-        output->write(ptr, 4);
-
         unsigned char *b = (unsigned char *) va_arg(ap, void *); // pointer to binary data
-        output->write(b, n);
-
-        i += (4 + n);
+        const int32_t n = va_arg(ap, int32_t); // length of blob
+        writeBlob(b,n);
         
         break;
       }
 	  
       case 's': {
         const char *str = (const char *) va_arg(ap, void *);
-        size_t s_len = strlen(str);
-        output->print(str);
-          output->write(nullChar);
-         i += s_len + 1;
+        
+        writeString(str);
+
+        
         break;
       }
 	  
 	   case 'f': {
         double  d = (double) va_arg(ap, double);//const float v = (float) va_arg(ap, double);
-        float v = d; // use float as double might be 64 bytes
-        float v32 = uOsc_bigEndian(v);
-        uint8_t * ptr = (uint8_t *) &v32;
-        output->write(ptr, 4);
-        i+=4;
+        writeFloat(d);
         break;
       }        
 
 	   case 'd': {
         double  d = (double) va_arg(ap, double);//const float v = (float) va_arg(ap, double);
-        double v64 = uOsc_bigEndian(d);
-        uint8_t * ptr = (uint8_t *) &v64;
-        output->write(ptr, sizeof(double));
-        i+=sizeof(double);
+        writeDouble(d);
         break;
       }  
       
 	   case 'm': {
 		 // get unsigned char array of size 4
-        const unsigned char *const k = (unsigned char *) va_arg(ap, void *);
-        output->write(k, 4);
-        i += 4;
+        const unsigned char *const midi = (unsigned char *) va_arg(ap, void *);
+       writeMidi(midi);
         break;
       }
-	  case 't':
+	  
       case 'h': {
-        const uint64_t t = (uint64_t) va_arg(ap, long long);
-		const uint64_t tBE = uOsc_bigEndian(t);
-		uint8_t * ptr = (uint8_t *) &tBE;
-        output->write(ptr, sizeof(uint64_t));
-        i += sizeof(uint64_t);
+        const uint64_t h = (uint64_t) va_arg(ap, long long);
+		    writeInt64(h);
         break;
       }
-      
+      case 't': // osc timetag
       case 'T': // true
       case 'F': // false
       case 'N': // nil
       case 'I': // infinitum
-          break;
-      default: return 0; // unsupported type
+      default: 
+      // unsupported type, force an error (length will not be a multiple of 4)
+      output->write(nullChar); 
     }
-	// pad the size
-	while ( (i % 4 ) ) {
-		output->write(nullChar);
-		i++; 
-	}
-
   }
-
-  return i; // return the total number of bytes written
-}
-
-
-void MicroOsc::writeMessage(Print* output, const char *address, const char *format, ...) {
-  va_list ap;
-  va_start(ap, format);
-  vprint(output, address, format, ap);
-  va_end(ap);
+  
 }
 
 
 
-MicroOsc::MicroOsc(){
-  //b = &bundle;
-  //o = &message;
 
-}
+
+MicroOsc::MicroOsc(Print* output) {
+		this->output = output;
+	};
+
+
 
 
 
 // http://opensoundcontrol.org/spec-1_0
-void MicroOsc::parseMessages(tOscCallbackFunction callback, unsigned char *buffer, const size_t len) {
+void MicroOsc::parseMessages(tOscCallbackFunction callback, unsigned char *buffer, const size_t bufferLength) {
  
   if ( callback == NULL ) return; 
 
   // Check for bundles
   if (isABundle(buffer)) {
 
-    parseBundle(buffer, len);
+    parseBundle(buffer, bufferLength);
     timetag = parseBundleTimeTag();
-    isPartOfABundle = true;
+    //isPartOfABundle = true;
     
     while ( getNextMessage()) {
       callback(message);
     }
   } else {
     timetag = 0;
-    isPartOfABundle = false;
-    if ( parseMessage(buffer,len) == 0 ) callback(message);
+    //isPartOfABundle = false;
+    if ( parseMessage(buffer,bufferLength) == 0 ) callback(message);
   }
   
 }
 
-int MicroOsc::parseMessage(unsigned char  *buffer, const size_t len) {
+int MicroOsc::parseMessage(unsigned char  *buffer, const size_t bufferLength) {
   // NOTE(mhroth): if there's a comma in the address, that's weird
   size_t i = 0;
   while (buffer[i] != '\0') ++i; // find the null-terimated address
   while (buffer[i] != ',') ++i; // find the comma which starts the format string
-  if (i >= len) return -1; // error while looking for format string
+  if (i >= bufferLength) return -1; // error while looking for format string
   // format string is null terminated
   message.format = (char*)(buffer + i + 1); // format starts after comma
 
-  while (i < len && buffer[i] != '\0') ++i;
-  if (i == len) return -2; // format string not null terminated
+  while (i < bufferLength && buffer[i] != '\0') ++i;
+  if (i == bufferLength) return -2; // format string not null terminated
 
   i = (i + 4) & ~0x3; // advance to the next multiple of 4 after trailing '\0'
   message.marker = buffer + i;
 
   message.buffer = buffer;
-  message.len = len;
+  message.bufferLength = bufferLength;
 
   return 0;
 }
@@ -271,11 +279,11 @@ bool MicroOsc::isABundle(const unsigned char  *buffer) {
 }
 
 
-void MicroOsc::parseBundle(unsigned char  *buffer, const size_t len) {
+void MicroOsc::parseBundle(unsigned char  *buffer, const size_t bufferLength) {
   bundle.buffer =  buffer;
   bundle.marker = buffer + 16; // move past '#bundle ' and timetag fields
-  bundle.bufLen = len;
-  bundle.bundleLen = len;
+  bundle.bufLen = bufferLength;
+  bundle.bundleLen = bufferLength;
 }
 
 
@@ -286,21 +294,85 @@ bool MicroOsc::getNextMessage() {
   if ((bundle.marker - bundle.buffer) >= bundle.bundleLen) return false;
   
   uint32_t lenBE = *((uint32_t *) bundle.marker);
-  uint32_t len = uOsc_bigEndian(lenBE);
+  uint32_t bufferLength = uOsc_bigEndian(lenBE);
   
-  parseMessage(bundle.marker+4, len);
-  bundle.marker += (4 + len); // move marker to next bundle element
+  parseMessage(bundle.marker+4, bufferLength);
+  bundle.marker += (4 + bufferLength); // move marker to next bundle element
   return true;
 }
 
+void MicroOsc::sendMessage(const char *address, const char *format, ...) {
+  beginMessage();
+  va_list ap;
+  va_start(ap, format);
+  writeMessage( address, format, ap);
+  va_end(ap);
+  endMessage();
+}
 
+
+void MicroOsc::sendInt(const char *address, int32_t i){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("i");
+  writeInt(i);
+  endMessage();
+}
+
+void MicroOsc::sendFloat(const char *address,float f){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("f");
+  writeFloat(f);
+  endMessage();
+}
+
+void MicroOsc::sendString(const char *address,const char *str){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("s");
+  writeString(str);
+  endMessage();
+}
+
+void MicroOsc::sendBlob(const char *address,unsigned char *b, int32_t length){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("b");
+  writeBlob(b,length);
+  endMessage();
+}
+
+void MicroOsc::sendDouble(const char *address,double d){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("d");
+  writeDouble(d);
+  endMessage();
+}
+
+void MicroOsc::sendMidi(const char *address,unsigned char *midi){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("m");
+  writeMidi(midi);
+  endMessage();
+}
+
+void MicroOsc::sendInt64(const char *address,uint64_t h){
+  beginMessage();
+  writeAddress(address);
+  writeFormat("h");
+  writeInt64(h);
+  endMessage();
+}
 
 
 MicroOscMessage::MicroOscMessage() {
 
 }
 
-int32_t MicroOscMessage::getNextInt32() {
+int32_t MicroOscMessage::nextAsInt() {
   // convert from big-endian (network btye order)
   const int32_t iBE = *((int32_t *) marker);
   const int32_t i  = uOsc_bigEndian(iBE);
@@ -310,7 +382,7 @@ int32_t MicroOscMessage::getNextInt32() {
 }
 
 
-float MicroOscMessage::getNextFloat() {
+float MicroOscMessage::nextAsFloat() {
   // convert from big-endian (network btye order)
   const uint32_t iBE = *((uint32_t *) marker);
   const uint32_t i  = uOsc_bigEndian(iBE);
@@ -319,9 +391,9 @@ float MicroOscMessage::getNextFloat() {
 }
 
 
-const char* MicroOscMessage::getNextString() {
+const char* MicroOscMessage::nextAsString() {
   int i = (int) strlen((const char*)marker);
-  if (marker + i >= buffer + len) return NULL;
+  if (marker + i >= buffer + bufferLength) return NULL;
   const char *s = (const char*)marker;
   i = (i + 4) & ~0x3; // advance to next multiple of 4 after trailing '\0'
   marker += i;
@@ -339,42 +411,49 @@ bool MicroOscMessage::fullMatch(const char* address, const char * typetags){
    return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
 }
 
-void MicroOscMessage::getNextBlob( const unsigned char  **blob, uint32_t *bloblen) {
+uint32_t MicroOscMessage::nextAsBlob( const unsigned char  **blob) {
 
   const uint32_t iBE = *((uint32_t *) marker);
+  
+  uint32_t length = 0;
   uint32_t i  = uOsc_bigEndian(iBE);
   
-  if (marker + 4 + i <= buffer + len) {
-    *bloblen = i; // length of blob
+  if (marker + 4 + i <= buffer + bufferLength) { // not bigger than stored data
+    length = i; // length of blob
     *blob = marker + 4;
     i = (i + 7) & ~0x3;
     marker += i;
   } else {
-    *bloblen = 0;
+    length = 0;
     *blob = NULL;
   }
+
+  return length;
 }
 
-void MicroOscMessage::getNextMidi( const unsigned char  **midiData) {
+int MicroOscMessage::nextAsMidi( const unsigned char  **midiData) {
 
-  if (marker + 4  <= buffer + len) {
+  if (marker + 4  <= buffer + bufferLength) {
     *midiData = marker;
      marker += 4;
+     return 4;
   } else {
-    *midiData = NULL;
+    return 0;
   }
 }
+
+
 
 
 /*
-size_t MicroOscMessage::getNextBlob( const unsigned char  **blob, size_t maxLength) {
+size_t MicroOscMessage::nextAsBlob( const unsigned char  **blob, size_t maxLength) {
   size_t i = (size_t) ntohl(*((uint32_t *) message.marker)); // get the blob length
-  if (i <= maxLength &&  message.marker + 4 + i <= message.buffer + message.len) {
-    size_t len = i; // length of blob
+  if (i <= maxLength &&  message.marker + 4 + i <= message.buffer + message.bufferLength) {
+    size_t bufferLength = i; // length of blob
     *blob = message.marker + 4;
     i = (i + 7) & ~0x3;
     message.marker += i;
-    return len;
+    return bufferLength;
   } else {
     
     *blob = NULL;
