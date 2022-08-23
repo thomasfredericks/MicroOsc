@@ -7,12 +7,13 @@ A few Arduino and application (Pure Data, Max, Node JS) examples are included.
 It is inspired on TinyOSC by Martin Roth (https://github.com/mhroth/TinyOSC).
 
 ## Supported Features
-Currently MicroOsc supports:
-* message parsing
-* message writing
-* bundle parsing as individual messages
+MicroOsc currently supports:
+* Full address and format matching
+* Message parsing
+* Message writing
+* Bundle parsing (as individual messages)
 * Send Types
-  * `b`: binary blob
+  * `b`: blob (byte array)
   * `f`: float
   * `d`: double
   * `i`: int (int32)
@@ -21,7 +22,7 @@ Currently MicroOsc supports:
   * `m`: midi
 
 * Receive Types
-  * `b`: binary blob
+  * `b`: blob (byte array)
   * `f`: float
   * `d`: double
   * `i`: int (int32)
@@ -29,16 +30,16 @@ Currently MicroOsc supports:
   * `m`: midi
 
 ## Unsupported Features
-Currently MicroOsc does not support:
+MicroOsc currently does not support:
 * ~~bundle writing~~
 * ~~timetags~~
-* ~~matching~~
+* ~~Regular expression matching~~
 * Send types not *yet* supported:
-  * ~~`t`: timetag~~`
-  * ~~``T`: true~~`
-  * ~~``F`: false~~`
-  * ~~``I`: infinitum~~`
-  * ~~``N`: nil~~`
+  * ~~`t`: timetag~~
+  * ~~``T`: true~~
+  * ~~``F`: false~~
+  * ~~``I`: infinitum~~
+  * ~~``N`: nil~~
 * Receive Types not *yet* supported:
   * ~~`h`: int64~~
   * ~~`t`: timetag~~
