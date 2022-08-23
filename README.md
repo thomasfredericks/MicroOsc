@@ -36,10 +36,10 @@ MicroOsc currently does not support:
 * ~~Regular expression matching~~
 * Send types not *yet* supported:
   * ~~`t`: timetag~~
-  * ~~``T`: true~~
-  * ~~``F`: false~~
-  * ~~``I`: infinitum~~
-  * ~~``N`: nil~~
+  * ~~`T`: true~~
+  * ~~`F`: false~~
+  * ~~`I`: infinitum~~
+  * ~~`N`: nil~~
 * Receive Types not *yet* supported:
   * ~~`h`: int64~~
   * ~~`t`: timetag~~
