@@ -120,7 +120,7 @@ void MicroOsc::writeBlob( unsigned char *b, int32_t length) {
   // pad the size
   padTheSize();
 }
-void MicroOsc::writeMidi(unsigned char *midi) {
+void MicroOsc::writeMidi(const unsigned char *midi) {
  output->write(midi, 4);
  outputWritten += 4;
 }
@@ -131,6 +131,7 @@ void MicroOsc::writeInt64(uint64_t h) {
   output->write(ptr, 8);
   outputWritten += 8;
 }
+
 
 
 

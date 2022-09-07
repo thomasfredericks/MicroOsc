@@ -108,11 +108,11 @@ class MicroSlip : public Print  {
 				return 1;
 	}
 
-	void beginPacket() {
+	virtual void beginPacket() {
 		stream->write(SLIP_END);
 	}
     
-    void endPacket() {
+    virtual void endPacket() {
     	stream->write(SLIP_END);
     }
 
@@ -185,3 +185,4 @@ class MicroOscSlip : public MicroOsc {
 };
 
 #endif // _MICRO_OSC_SLIP_
+

@@ -18,10 +18,10 @@ class MicroOscUdp : public MicroOsc {
     unsigned int destinationPort;
 
     protected:
-	void beginMessage() {
+	virtual void beginMessage() {
 		udp->beginPacket(destinationIp, destinationPort);
 	}
-	void endMessage() {
+	virtual void endMessage() {
 		 udp->endPacket(); 
 	}
 
@@ -65,5 +65,6 @@ class MicroOscUdp : public MicroOsc {
 
 
 };
+
 
 #endif // _MICRO_OSC_UDP_
