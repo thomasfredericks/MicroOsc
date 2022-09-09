@@ -33,7 +33,7 @@ WiFiUDP udp;
 unsigned int receivePort = 8888;
 
 IPAddress broadcastIp(255, 255, 255, 255);
-IPAddress sendIp(192, 168, 1, 225);
+IPAddress sendIp(192, 168, 1, 210);
 unsigned int sendPort = 7777;
 
 
@@ -97,6 +97,7 @@ void setup() {
 
 void receivedOscMessage( MicroOscMessage& message) {
 
+
   // WHEN A MESSAGE IS MATCHED IT ECHOS IT THROUGH SERIAL(ASCII) AND UDP
 
   if ( message.fullMatch("/test/i", "i") ) {
@@ -153,40 +154,20 @@ void loop() {
   if ( printIPChrono.hasPassed(5000) ) {
     printIPChrono.restart();
 
-    Serial.print("DEBUG ESP32 IP is :");
+    Serial.print("ESP32 IP is :");
     Serial.println(WiFi.localIP());
+
+    Serial.print("ESP32 receive port is :");
+    Serial.println(receivePort);
+
+    Serial.print("Target IP is :");
+    Serial.println(sendIp);
+
+    Serial.print("Target port is :");
+    Serial.println(sendPort);
+    
   }
 
   oscUdp.receiveMessages( receivedOscMessage );
-  /*
-    oscUdp.sendMessage("/test/i",  "i",   (uint32_t) millis());
-    delay(1000);
-
-    oscUdp.sendMessage("/test/f",  "f",   ((float)millis()) *0.001);
-    delay(1000);
-
-    uint8_t blob[3];
-    blob[0] = millis() % 256;
-    blob[1] = (millis()+1) % 256;
-    blob[2] = (millis()+2) % 256;
-    oscUdp.sendMessage("/test/b",  "b",   3 , blob);
-    delay(1000);
-
-    const char * hello = "hello";
-    oscUdp.sendMessage("/test/s",  "s",  hello);
-    delay(1000);
-
-    uint8_t midi[4];
-    midi[0] = millis() % 128;
-    midi[1] = (millis()+1) % 128;
-    midi[2] = (millis()+2) % 128;
-    midi[3] = (millis()+3) % 128;
-    oscUdp.sendMessage("/test/m",  "m",  midi);
-    delay(1000);
-
-
-    oscUdp.sendMessage("/test/t",  "t",  (uint64_t)(millis()));
-    delay(1000);
-  */
-
+  
 }
