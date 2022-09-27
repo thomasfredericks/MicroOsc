@@ -51,51 +51,106 @@ MicroOsc will probably never support:
 * timetags
 * Regular expression matching
 
+## Initialisation 
+
+### OSC SLIP
+
+```cpp
+#include <MicroOscSlip.h>
+// The number 128 between the < > below  is the maximum number of bytes reserved for incomming messages.
+// Outgoing messages are written directly to the output and do not need more reserved bytes.
+MicroOscSlip<128> myOsc(&Serial);
+```
+
+### OSC UDP
+
+Initilise UDP and network details first:
+```cpp
+#include <WiFiUdp.h>
+WiFiUDP myUdp;
+unsigned int myReceivePort = 8888;
+IPAddress mySendIp(192, 168, 1, 210);
+unsigned int mySendPort = 7777;
+```
+
+Initilise and include MicroOsc:
+```cpp
+#include <MicroOscUdp.h>
+// The number 1024 between the < > below  is the maximum number of bytes reserved for incomming messages.
+// Outgoing messages are written directly to the output and do not need more reserved bytes.
+MicroOscUdp<1024> myOsc(&myUdp, mySendIp, mySendPort);
+```
+
+In setup don't forget to start UDP:
+```cpp
+ myUdp.begin(myReceivePort);
+```
+
 ## Receive OSC
 
 
-### Check for an adress. Returns `true` if the address matches exactly
+### Check address and argument types
+
+Check for an adress:
 ```cpp
-    /**
-   * Returns true if the address and type tag matches.
-   */
-  bool fullMatch(const char* address);
+/**
+* Returns true if the address matches exactly
+*/
+bool fullMatch(const char* address);
 ```
 
-### Check for an adress more precisily. Returns `true` if the address and typetags match exactly
+Check for an adress more precisily:
 ```cpp
-    /**
-   * Returns true if the address and type tag matches.
-   */
-  bool fullMatch(const char* address, const char * typetags);
+/**
+* Returns true if the address and argument type tags match exactly.
+*/
+bool fullMatch(const char* address, const char * typetags);
 ```
+### Get argument values
 
+Get the next argument in the buffer as a 32-bit **int**:
+```cpp
   /**
-   * Returns the next 32-bit int. Does not check buffer bounds.
+   * Returns the next argument as a 32-bit int. 
+   * Does not check buffer bounds.
    */
   int32_t nextAsInt();
+```
 
-
+Get the next argument in the buffer as a 32-bit **float**:
+```cpp
   /**
-   * Returns the next 32-bit float. Does not check buffer bounds.
+   * Returns the next argument as a 32-bit float.
+   * Does not check buffer bounds.
    */
   float nextAsFloat();
+```
 
-
-  /**
-   * Returns the next string, or NULL if the buffer length is exceeded.
-   */
+Get the next argument in the buffer as a C **string** pointer:
+```cpp
+	/**
+	 * Treats the next argument as a string and returns a pointer to the data as a C string, 
+  * or NULL if the buffer length is exceeded.
+	 */
   const char* nextAsString();
+```
 
-  /**
-   * Points to the blob data. The pointer is NULL if there was an error.
-   * Returns the length of the blob. Returns 0 if there was an error.
-   */
+Get the next argument in the buffer as a **byte array(blob)**:
+```cpp
+	/**
+	 * Treats the next argument as a blob of data and fills a pointer with the address to a byte array. 
+  * The pointer is NULL if there was an error.
+	 * Returns the length of the byte blob. Returns 0 if there was an error.
+	 */
   uint32_t nextAsBlob(const uint8_t **blobData);
+```
 
-  
-  /**
-   * Returns a pointer to the MIDI data. Returns NULL if the OSC buffer bounds are exceeded.
-   * MIDI data always has a length of 4.
-   */
+Get the next argument in the buffer as a **MIDI** data array:
+```cpp
+	/**
+	 * Treats the next value as MIDI and fills a pointer with the address to the MIDI data. 
+  * The pointer is NULL if the OSC bounds are exceeded.
+	 * MIDI data always has a length of 4. Bytes from MSB to LSB are: port id, status byte, data1, data2
+	 */
   int nextAsMidi(const uint8_t **midiData);
+```  
