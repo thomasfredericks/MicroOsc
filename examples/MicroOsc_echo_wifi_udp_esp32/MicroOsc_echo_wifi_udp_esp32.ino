@@ -93,8 +93,7 @@ void setup() {
 
 }
 
-// FUNCTION THAT IS CALLED FOR EVERY RECEIVED MESSAGE.
-
+// FUNCTION THAT WILL BE CALLED WHEN AN OSC MESSAGE IS RECEIVED:
 void receivedOscMessage( MicroOscMessage& message) {
 
 

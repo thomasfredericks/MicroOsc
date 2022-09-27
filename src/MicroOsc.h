@@ -36,44 +36,49 @@ class MicroOscMessage {
 
 	MicroOscMessage();
 
-	/**
-	 * Returns true if the address matches.
-	 */
+  /**
+  * Returns `true` if the address matches exactly
+  */
 	bool fullMatch(const char* address);
 
-	/**
-	 * Returns true if the address and type tag matches.
-	 */
+/**
+* Returns true if the address and argument type tags match exactly.
+*/
 	bool fullMatch(const char* address, const char * typetags);
 
 
-	/**
-	 * Returns the next 32-bit int. Does not check buffer bounds.
-	 */
+  /**
+   * Returns the next argument as a 32-bit int. 
+   * Does not check buffer bounds.
+   */
 	int32_t nextAsInt();
 
 
-	/**
-	 * Returns the next 32-bit float. Does not check buffer bounds.
-	 */
+  /**
+   * Returns the next argument as a 32-bit float.
+   * Does not check buffer bounds.
+   */
 	float nextAsFloat();
 
 
-	/**
-	 * Returns the next string, or NULL if the buffer length is exceeded.
+		/**
+	 * Treats the next argument as a string and returns a pointer to the data as a C string, 
+  * or NULL if the buffer length is exceeded.
 	 */
 	const char* nextAsString();
 
 	/**
-	 * Points to the blob data. The pointer is NULL if there was an error.
-	 * Returns the length of the blob. Returns 0 if there was an error.
+	 * Treats the next argument as a blob of data and fills a pointer with the address to a byte array. 
+  * The pointer is NULL if there was an error.
+	 * Returns the length of the byte blob. Returns 0 if there was an error.
 	 */
 	uint32_t nextAsBlob(const uint8_t **blobData);
 
 	
 	/**
-	 * Returns a pointer to the MIDI data. Returns NULL if the OSC buffer bounds are exceeded.
-	 * MIDI data always has a length of 4.
+	 * Treats the next value as MIDI and fills a pointer with the address to the MIDI data. 
+  * The pointer is NULL if the OSC bounds are exceeded.
+	 * MIDI data always has a length of 4. Bytes from MSB to LSB are: port id, status byte, data1, data2
 	 */
 	int nextAsMidi(const uint8_t **midiData);
 

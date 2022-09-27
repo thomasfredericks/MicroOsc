@@ -1,21 +1,22 @@
-#N canvas 73 254 1641 1010 12;
-#X obj 302 633 loadbang;
-#X obj 81 776 mrpeach/udpsend;
-#X msg 316 707 disconnect;
+#N canvas 165 210 934 1010 12;
 #X text 25 12 This patcher requires the following additionnal libraries
 of objects : mrpeach \, comport and cyclone;
-#X obj 61 230 cnv 15 800 300 empty empty empty 20 12 0 14 #c6ffc7 #404040
+#X obj 72 135 cnv 15 200 40 empty empty empty 20 12 0 14 #feffc6 #404040
 0;
-#X obj 180 448 print errors;
+#X obj 53 228 cnv 15 800 300 empty empty empty 20 12 0 14 #c6ffc7 #404040
+0;
+#X obj 178 290 cnv 15 630 100 empty empty empty 20 12 0 14 #feffc6
+#404040 0;
+#X obj 195 447 print errors;
 #X msg 157 268 devices;
 #X obj 78 418 comport/comport;
-#X text 195 418 Serial port input/output;
-#X msg 186 318 baud 115200 \, devicename COM3;
-#X text 219 268 List all serial ports;
-#X text 391 318 Configure the baud rate and open the named serial port
+#X text 195 417 Serial port input/output;
+#X msg 187 323 baud 115200 \, devicename COM3;
+#X text 219 267 List all serial ports;
+#X text 400 324 Configure the baud rate and open the named serial port
 ;
 #X msg 228 349 close;
-#X text 276 350 Close the port;
+#X text 276 348 Close the port;
 #X obj 78 504 mrpeach/slipdec 65536;
 #N canvas 156 156 1101 683 multof4 0;
 #X obj 91 60 inlet;
@@ -40,23 +41,44 @@ of objects : mrpeach \, comport and cyclone;
 #X connect 8 0 9 0;
 #X restore 80 575 pd multof4;
 #X text 234 503 Convert from SLIP to a raw OSC message;
-#X obj 82 237 mrpeach/slipenc 65536;
-#X text 240 239 Convert from raw OSC to SLIP;
-#X msg 302 675 connect localhost 7001;
+#X obj 82 230 mrpeach/slipenc 65536;
+#X text 240 229 Convert from raw OSC to SLIP;
 #X obj 82 143 mrpeach/udpreceive 7000;
-#X obj 187 291 loadbang;
-#X text 156 569 Error checking : make sure the packet size is a multiple
+#X obj 187 298 loadbang;
+#X text 156 574 Error checking : make sure the packet size is a multiple
 of 4;
-#X connect 0 0 19 0;
-#X connect 2 0 1 0;
-#X connect 6 0 7 0;
-#X connect 7 0 14 0;
-#X connect 7 1 5 0;
-#X connect 9 0 7 0;
-#X connect 12 0 7 0;
-#X connect 14 0 15 0;
-#X connect 15 0 1 0;
-#X connect 17 0 7 0;
-#X connect 19 0 1 0;
-#X connect 20 0 17 0;
-#X connect 21 0 9 0;
+#X obj 55 593 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X obj 54 161 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X obj 312 829 mrpeach/unpackOSC;
+#X obj 312 799 spigot;
+#X obj 351 776 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X obj 313 872 print debug;
+#X obj 287 624 cnv 15 200 100 empty empty empty 20 12 0 14 #feffc6
+#404040 0;
+#X obj 302 633 loadbang;
+#X obj 81 776 mrpeach/udpsend;
+#X msg 302 697 disconnect;
+#X msg 302 665 connect localhost 7001;
+#X text 370 775 Print the message sent by the serial port;
+#X connect 5 0 6 0;
+#X connect 6 0 13 0;
+#X connect 6 1 4 0;
+#X connect 8 0 6 0;
+#X connect 11 0 6 0;
+#X connect 13 0 14 0;
+#X connect 14 0 21 0;
+#X connect 14 0 24 0;
+#X connect 14 0 29 0;
+#X connect 16 0 6 0;
+#X connect 18 0 16 0;
+#X connect 18 0 22 0;
+#X connect 19 0 8 0;
+#X connect 23 0 26 0;
+#X connect 24 0 23 0;
+#X connect 25 0 24 1;
+#X connect 28 0 31 0;
+#X connect 30 0 29 0;
+#X connect 31 0 29 0;
