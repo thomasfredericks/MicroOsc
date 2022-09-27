@@ -51,6 +51,12 @@ MicroOsc will probably never support:
 * timetags
 * Regular expression matching
 
+## Classes
+
+MicroOsc contains 2 classes:
+- **MicroOsc** : the base class
+- **MicroOscMessage** : a received OSC message
+
 ## Initialisation 
 
 ### OSC SLIP
