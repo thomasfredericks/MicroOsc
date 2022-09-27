@@ -218,3 +218,49 @@ const uint8_t* midi;
 receivedOscMessage.nextAsMidi(&midi);
 ```
 
+## Send OSC
+
+MicroOsc provides individual fonctions for sending a single argument all supported types. It also provides an advanced function for sending messages with multiples arguments of the same or mixed type.
+
+#### Sending single argument messages
+
+```cpp
+void sendMessage(const char *address, const char *format, ...);
+void sendInt(const char *address, int32_t i);
+void sendFloat(const char *address, float f);
+void sendString(const char *address, const char *str);
+void sendBlob(const char *address, unsigned char *b, int32_t length);
+void sendDouble(const char *address,double d);
+void sendMidi(const char *address,unsigned char *midi);
+void sendInt64(const char *address, uint64_t h);
+``` 
+
+Example of sending an int :
+```cpp
+int reading = analogRead(1);
+myOsc.sendInt("/photo", reading);
+``` 
+
+#### Advanced sending
+```cpp
+void sendMessage(const char *address, const char *format, ... );
+``` 
+The format string defines the argument types. Following the format string, you must provide a number of arguments depending on the types:
+* "i" : one uint32_t
+* "f" : one 32-bit float
+* "s" : one pointer to a char array
+* "b" : one pointer to a uint8_t array **followed by** its length as one uint32_t
+* "m" : one pointer to a uint8_t array of size 4
+
+Example that sends a "/stuff" message with a float, string and integer arguments:
+```cpp
+myOsc.sendMessage("/stuff", "fsi", 1.0 , "hello", 2);
+``` 
+
+Example that sends a "/blub" message with a blob argument:
+```cpp
+uint8_t blob[4] = {1,2,3,4};
+uint32_t length = 4;
+myOsc.sendMessage("/blub", "b", blob, length);
+``` 
+
