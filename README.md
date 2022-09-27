@@ -59,6 +59,8 @@ MicroOsc contains 2 classes:
 
 ## Initialisation 
 
+There are currently 2 supported transport protocols. Serial (with SLIP) and UDP. The 2 versions are identical except for their initilisation.
+
 ### OSC SLIP
 
 ```cpp
