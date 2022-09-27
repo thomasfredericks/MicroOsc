@@ -1,10 +1,10 @@
 // HARDWARE REQUIREMENTS
 // ==================
-// None
+// Potentiometer connected to analog pin A0
 
 // REQUIRED LIBRARIES
 // ==================
-// None
+// MicroOsc
 
 // REQUIRED CONFIGURATION
 // ======================
