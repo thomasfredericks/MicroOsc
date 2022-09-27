@@ -57,9 +57,9 @@ MicroOsc contains 2 classes:
 - **MicroOsc** : the base class
 - **MicroOscMessage** : a received OSC message
 
-## Initialisation 
+## Initialization  
 
-There are currently 2 supported transport protocols. Serial (with SLIP) and UDP. The 2 versions are identical except for their initilisation.
+There are currently 2 supported transport protocols. Serial (with SLIP) and UDP. The 2 versions are identical except for their initialization.
 
 ### OSC SLIP
 
@@ -70,9 +70,14 @@ There are currently 2 supported transport protocols. Serial (with SLIP) and UDP.
 MicroOscSlip<128> myOsc(&Serial);
 ```
 
+In `setup()` don't forget to start Serial:
+```cpp
+  Serial.begin(115200);
+```
+
 ### OSC UDP
 
-Initilise UDP and network details first:
+Initialize UDP and network details first:
 ```cpp
 #include <WiFiUdp.h>
 WiFiUDP myUdp;
@@ -81,7 +86,7 @@ IPAddress mySendIp(192, 168, 1, 210);
 unsigned int mySendPort = 7777;
 ```
 
-Initilise and include MicroOsc:
+Initialize and include MicroOsc:
 ```cpp
 #include <MicroOscUdp.h>
 // The number 1024 between the < > below  is the maximum number of bytes reserved for incomming messages.
