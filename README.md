@@ -108,7 +108,8 @@ myOsc.receiveMessages( myOscMessageParser );
 
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message. **The following functions are members of `MicroOscMessage`.**
 
-Check for an address:
+#### Check for an address
+
 ```cpp
 /**
 * Returns true if the address matches exactly
@@ -116,13 +117,14 @@ Check for an address:
 bool fullMatch(const char* address);
 ```
 
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 if ( receivedOscMessage.fullMatch("/pot") ) {
 	// ...
 }
 ```
 
-Check for an address more precisily:
+####  Check for an address more precisily
 ```cpp
 /**
 * Returns true if the address and argument type tags match exactly.
@@ -130,6 +132,7 @@ Check for an address more precisily:
 bool fullMatch(const char* address, const char * typetags);
 ```
 
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 if ( receivedOscMessage.fullMatch("/pot", "i") ) {
 	// ...
@@ -140,7 +143,7 @@ if ( receivedOscMessage.fullMatch("/pot", "i") ) {
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message.
 **The following functions are members of `MicroOscMessage`.**
 
-Get the next argument in the buffer as a 32-bit **int**:
+#### Get the next argument in the buffer as a 32-bit **int**
 ```cpp
 /**
 * Returns the next argument as a 32-bit int. 
@@ -148,11 +151,13 @@ Get the next argument in the buffer as a 32-bit **int**:
 */
 int32_t nextAsInt();
 ```
+
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 int32_t intArgument = receivedOscMessage.nextAsInt();
 ```
 
-Get the next argument in the buffer as a 32-bit **float**:
+####  Get the next argument in the buffer as a 32-bit **float**
 ```cpp
 /**
 * Returns the next argument as a 32-bit float.
@@ -160,11 +165,14 @@ Get the next argument in the buffer as a 32-bit **float**:
 */
 float nextAsFloat();
 ```
+
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 float floatArgument = receivedOscMessage.nextAsFloat();
 ```
 
-Get the next argument in the buffer as a C **string** pointer:
+####  Get the next argument in the buffer as a C **string** pointer
+
 ```cpp
 /**
 * Treats the next argument as a string and returns a pointer to the data as a C string, 
@@ -173,11 +181,12 @@ Get the next argument in the buffer as a C **string** pointer:
 const char* nextAsString();
 ```
 
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 const char * s = receivedOscMessage.nextAsString();
 ```
 
-Get the next argument in the buffer as a **byte array(blob)**:
+#### Get the next argument in the buffer as a **byte array(blob)**
 ```cpp
 /**
 * Treats the next argument as a blob of data and fills a pointer with the address to a byte array. 
@@ -187,12 +196,13 @@ Get the next argument in the buffer as a **byte array(blob)**:
 uint32_t nextAsBlob(const uint8_t **blobData);
 ```
 
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 const uint8_t* blob;
 uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 ```
 
-Get the next argument in the buffer as a **MIDI** data array:
+####  Get the next argument in the buffer as a **MIDI** data array
 ```cpp
 /**
 * Treats the next value as MIDI and fills a pointer with the address to the MIDI data. 
@@ -201,6 +211,8 @@ Get the next argument in the buffer as a **MIDI** data array:
 */
 int nextAsMidi(const uint8_t **midiData);
 ```  
+
+Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 const uint8_t* midi;
 receivedOscMessage.nextAsMidi(&midi);
