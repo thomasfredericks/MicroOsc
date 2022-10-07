@@ -1,0 +1,28 @@
+{
+    "name": "osc.js-examples-node",
+    "main": "index.js",
+    "version": "0.1.1",
+    "description": "Example of how to use osc.js in Node.js.",
+    "author": "Colin Clark",
+    "homepage": "http://flockingjs.org/",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/colinbdclark/osc.js-examples.git"
+    },
+    "readmeFilename": "README.md",
+    "bugs": "https://github.com/colinbdclark/osc.js/issues",
+    "license": "(MIT OR GPL-2.0)",
+    "keywords": [
+        "Open Sound Control",
+        "OSC",
+        "sound",
+        "audio",
+        "music",
+        "Flocking"
+    ],
+    "dependencies": {
+        "osc": "2.4.2",
+		 "express": "4.17.1",
+        "ws": "7.5.3"
+    }
+}
