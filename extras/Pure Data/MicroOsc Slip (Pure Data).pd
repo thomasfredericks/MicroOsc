@@ -1,0 +1,56 @@
+#N canvas 438 142 899 718 12;
+#X text 25 12 This patcher requires the following additionnal libraries
+of objects : mrpeach \, comport and cyclone;
+#X obj 65 552 cnv 15 200 130 empty empty empty 20 12 0 14 #feffc6 #404040
+0;
+#X obj 67 64 cnv 15 200 130 empty empty empty 20 12 0 14 #feffc6 #404040
+0;
+#X obj 53 228 cnv 15 800 300 empty empty empty 20 12 0 14 #c6ffc7 #404040
+0;
+#X obj 154 258 cnv 15 630 130 empty empty empty 20 12 0 14 #ff8300
+#404040 0;
+#X obj 195 447 print errors;
+#X msg 157 268 devices;
+#X obj 78 418 comport/comport;
+#X text 195 417 Serial port input/output;
+#X msg 187 323 baud 115200 \, devicename COM3;
+#X text 219 267 List all serial ports;
+#X text 400 324 Configure the baud rate and open the named serial port
+;
+#X msg 228 349 close;
+#X text 276 348 Close the port;
+#X obj 78 504 mrpeach/slipdec 65536;
+#X text 234 503 Convert from SLIP to a raw OSC message;
+#X obj 82 230 mrpeach/slipenc 65536;
+#X text 240 229 Convert from raw OSC to SLIP;
+#X obj 187 298 loadbang;
+#X obj 90 172 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X obj 78 565 mrpeach/unpackOSC;
+#X obj 82 149 mrpeach/packOSC;
+#X msg 82 105 sendtyped /led i \$1;
+#X floatatom 82 73 5 0 255 0 - - - 0;
+#X obj 78 616 route /pot /photo /button;
+#X obj 192 649 tgl 15 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000 0 1;
+#X floatatom 135 646 5 0 0 0 - - - 0;
+#X floatatom 78 646 5 0 0 0 - - - 0;
+#X obj 94 589 bng 15 250 50 0 empty empty empty 17 7 0 10 #fcfcfc #000000
+#000000;
+#X connect 6 0 7 0;
+#X connect 7 0 14 0;
+#X connect 7 1 5 0;
+#X connect 9 0 7 0;
+#X connect 12 0 7 0;
+#X connect 14 0 20 0;
+#X connect 16 0 7 0;
+#X connect 18 0 9 0;
+#X connect 20 0 24 0;
+#X connect 20 0 28 0;
+#X connect 21 0 16 0;
+#X connect 21 0 19 0;
+#X connect 22 0 21 0;
+#X connect 23 0 22 0;
+#X connect 24 0 27 0;
+#X connect 24 1 26 0;
+#X connect 24 2 25 0;
