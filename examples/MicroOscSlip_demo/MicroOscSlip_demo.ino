@@ -1,3 +1,7 @@
+// MicroOscSlip_demo
+// by Thomas O Fredericks
+// 2022-10-26
+
 // HARDWARE REQUIREMENTS
 // ==================
 // Potentiometer connected to analog pin A0

@@ -1,7 +1,7 @@
 /*******************
  * CONFIGURATION   *
  *******************/
-let serialPath = "COM8";
+let serialPath = "COM7";
 let serialBaud = 115200;
 let wsPort = 8000;
 
@@ -24,61 +24,18 @@ let serial = new osc.SerialPort({
 	bitrate : serialBaud,
     metadata: true	
 });
-
-serial.on("message", function (oscMessage) {
-    console.log(oscMessage);
-});
-
-serial.on("error", function (errorMsg) {
-	console.log(errorMsg);
-});
-
-
-/****************
- * OSC Over UDP *
- ****************/
 /*
-var getIPAddresses = function () {
-    var os = require("os"),
-        interfaces = os.networkInterfaces(),
-        ipAddresses = [];
+serial.on("message", function (oscMessage) {
+  
 
-    for (var deviceName in interfaces) {
-        var addresses = interfaces[deviceName];
-        for (var i = 0; i < addresses.length; i++) {
-            var addressInfo = addresses[i];
-            if (addressInfo.family === "IPv4" && !addressInfo.internal) {
-                ipAddresses.push(addressInfo.address);
-            }
-        }
-    }
-
-    return ipAddresses;
-};
-
-// Bind to a UDP socket to listen for incoming OSC events.
-var udpPort = new osc.UDPPort({
-    localAddress: "0.0.0.0",
-    localPort: 57121
-});
-
-udpPort.on("ready", function () {
-    var ipAddresses = getIPAddresses();
-
-    console.log("Listening for OSC over UDP.");
-    ipAddresses.forEach(function (address) {
-        console.log(" Host:", address + ", Port:", udpPort.options.localPort);
-    });
-});
-
-udpPort.on("message", function (oscMessage) {
-    console.log(oscMessage);
-});
-
-udpPort.on("error", function (err) {
-    console.log(err);
 });
 */
+serial.on("error", function (errorMsg) {
+	console.log("The was a SLIP parsing error. Continuing.");
+	//console.log(errorMsg);
+});
+
+
 
 let serialPaths = [];
 
@@ -117,9 +74,11 @@ function start() {
 		// Open serial port.
 		console.log("\nOpening Serial Port "+serialPath);
 		serial.open();
+/*
 		serial.on("message", function (oscMsg) {
 			console.log("An OSC message just arrived!", oscMsg);
         });
+*/
 		// Open UDP
 		//udpPort.open();
 		// Create an Express-based Web Socket server to which OSC messages will be relayed.
@@ -139,9 +98,7 @@ function start() {
 				metadata: true	
 			});
 
-			relay = new osc.Relay(serial, socketPort, {
-				raw: true
-			});
+			relay = new osc.Relay(serial, socketPort);
 		});
 		
 
