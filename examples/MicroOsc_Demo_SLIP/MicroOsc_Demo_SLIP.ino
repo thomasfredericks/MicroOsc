@@ -1,4 +1,4 @@
-// MicroOscSlip_demo
+// MicroOsc_Demo_SLIP
 // by Thomas O Fredericks
 // 2022-10-26
 

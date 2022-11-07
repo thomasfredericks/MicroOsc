@@ -202,7 +202,7 @@ const char * s = receivedOscMessage.nextAsString();
 #### Get the next argument in the buffer as a **byte array(blob)**
 ```cpp
 /**
-* Treats the next argument as a blob of data and fills a pointer with the address to a byte array. 
+* Treats the next argument as a blob of data and sets a pointer with the address to a byte array. 
 * The pointer is NULL if there was an error.
 * Returns the length of the byte blob. Returns 0 if there was an error.
 */
@@ -218,7 +218,7 @@ uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 ####  Get the next argument in the buffer as a **MIDI** data array
 ```cpp
 /**
-* Treats the next value as MIDI and fills a pointer with the address to the MIDI data. 
+* Treats the next value as MIDI and sets a pointer with the address to the MIDI data. 
 * The pointer is NULL if the OSC bounds are exceeded.
 * MIDI data always has a length of 4. Bytes from MSB to LSB are: port id, status byte, data1, data2
 */
