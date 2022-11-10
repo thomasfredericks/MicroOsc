@@ -1,6 +1,6 @@
 // MicroOsc_NeoPixel_SLIP
 // by Thomas O Fredericks
-// 2022-11-07
+// 2022-11-09
 
 // HARDWARE REQUIREMENTS
 // ==================
@@ -31,13 +31,24 @@ void setup() {
   // INITIATE SERIAL COMMUNICATION
   Serial.begin(115200);                                         
   // INITIALIZE PIXEL STRIP
-  myPixelStrip.begin();                                         
+  myPixelStrip.begin(); 
+  // STARTUP ANIMATION
+  // LIGHT ALL PIXELS IN WHITE THEN TURN THEM ALL OFF
+  for ( int i=0; i < myPixelCount; i++ ) {
+     myPixelStrip.setPixelColor(i, myPixelStrip.Color(255, 255 , 255));  
+     myPixelStrip.show();
+     delay(100);                                       
+  }
+  delay(1000);
+  myPixelStrip.clear();
+  myPixelStrip.show();
 }
 
 // FUNCTION THAT IS CALLED FOR EVERY RECEIVED OSC MESSAGE
 void myOnReceiveMessage( MicroOscMessage& receivedOscMessage ) {
   // IF THE ADDRESS IS /rgb
-  if ( receivedOscMessage.fullMatch("/rgb") ) {                 
+  if ( receivedOscMessage.fullMatch("/rgb") ) {   
+                 
     // CREATE A VARIABLE TO STORE THE POINTER TO THE DATA
     const uint8_t* blobData;                                    
     // GET THE DATA SIZE AND THE POINTER TO THE DATA
@@ -49,9 +60,13 @@ void myOnReceiveMessage( MicroOscMessage& receivedOscMessage ) {
       // ITERATE THROUGH EACH PIXEL IN THE BLOB 
       for ( int i = 0 ; i < blobPixelCount ; i++ ) {            
         // EACH PIXEL HAS 3 BYTES, SO WE GO THROUGH THE DATA, 3 AT A TIME
-        int blobIndex = i * 3;                                  
-        myPixelStrip.setPixelColor(i, myPixelStrip.Color(blobIndex , blobIndex+1 , blobIndex+2));
+        int blobIndex = i * 3; 
+        uint8_t red =  myPixelStrip.gamma8(blobData[blobIndex]);
+        uint8_t green =  myPixelStrip.gamma8(blobData[blobIndex+1]); 
+        uint8_t blue =  myPixelStrip.gamma8(blobData[blobIndex+2]);                            
+        myPixelStrip.setPixelColor(i, myPixelStrip.Color(red , green , blue));
       }
+      myPixelStrip.show();
     }
   }
 }
