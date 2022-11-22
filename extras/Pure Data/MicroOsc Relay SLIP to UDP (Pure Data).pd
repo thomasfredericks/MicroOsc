@@ -1,79 +1,72 @@
-#N canvas 1353 258 934 1010 12;
-#X text 25 12 This patcher requires the following additionnal libraries
-of objects : mrpeach \, comport and cyclone;
-#X obj 469 83 cnv 15 400 100 empty empty empty 20 12 0 14 -203904 -66577
-0;
-#X obj 460 684 cnv 15 400 260 empty empty empty 20 12 0 14 -203904
+#N canvas 392 217 934 1010 12;
+#X obj 55 521 cnv 15 800 120 empty empty CONVERT_SLIP_TO_BYTES(LIST)
+0 -10 0 14 -204786 -99865 0;
+#X obj 469 83 cnv 15 400 100 empty empty CONVERT_PD_MESSAGE_TO_BYTES(LIST)
+0 -10 0 14 -203904 -66577 0;
+#X obj 466 703 cnv 15 400 260 empty empty CONVERT_BYTES(LIST)_TO_PD_MESSAGE
+0 -10 0 14 -203904 -66577 0;
+#X obj 62 89 cnv 15 200 60 empty empty RECEIVE_BYTES(LIST)_FROM_UDP
+0 -10 0 14 -262130 -66577 0;
+#X obj 57 210 cnv 15 800 60 empty empty CONVERT_BYTES(LIST)_TO_SLIP
+0 -10 0 14 -204786 -99865 0;
+#X obj 56 296 cnv 15 800 200 empty empty SERIAL 0 -10 0 14 -204800
 -66577 0;
-#X obj 72 135 cnv 15 200 40 empty empty empty 20 12 0 14 -262130 -66577
-0;
-#X obj 53 228 cnv 15 800 400 empty empty empty 20 12 0 14 -204786 -66577
-0;
-#X obj 66 279 cnv 15 700 200 empty empty empty 20 12 0 14 -204800 -66577
-0;
-#X obj 179 447 print errors;
-#X msg 138 289 devices;
-#X text 195 417 Serial port input/output;
-#X msg 156 340 baud 115200 \, devicename COM3;
-#X text 200 288 List all serial ports;
-#X text 364 341 Configure the baud rate and open the named serial port
+#X obj 185 466 print errors;
+#X msg 144 308 devices;
+#X text 201 436 Serial port input/output;
+#X msg 162 359 baud 115200 \, devicename COM3;
+#X text 206 307 List all serial ports;
+#X text 370 360 Configure the baud rate and open the named serial port
 ;
-#X msg 196 363 close;
-#X text 244 362 Close the port;
-#N canvas 156 156 1101 683 multof4 0;
-#X obj 157 132 list length;
-#X obj 161 161 % 4;
-#X obj 168 199 == 0;
-#X obj 236 245 select 0;
-#N canvas 182 182 896 652 switcher 0;
-#X obj 217 67 inlet;
-#X obj 230 412 outlet out0;
-#X obj 432 408 outlet out1;
-#X obj 392 65 inlet select outlet;
-#X obj 270 281 route 0 1;
-#X obj 265 222 list prepend 0;
-#X connect 0 0 5 0;
-#X connect 3 0 5 1;
-#X connect 4 0 1 0;
-#X connect 4 1 2 0;
-#X connect 5 0 4 0;
-#X restore 104 312 pd switcher;
-#X obj 103 96 t a a b;
-#X msg 270 90 0;
-#X msg 238 284 1;
-#X obj 246 434 outlet error;
-#X obj 105 431 outlet valid;
-#X obj 102 37 inlet list;
-#X connect 0 0 1 0;
-#X connect 1 0 2 0;
-#X connect 2 0 3 0;
-#X connect 3 0 7 0;
-#X connect 4 0 9 0;
-#X connect 4 1 8 0;
-#X connect 5 0 4 0;
-#X connect 5 1 0 0;
-#X connect 5 2 6 0;
-#X connect 6 0 4 1;
-#X connect 7 0 4 1;
-#X connect 10 0 5 0;
-#X restore 79 561 pd multof4;
-#X text 234 503 Convert from SLIP to a raw OSC message;
-#X text 182 232 Convert from raw OSC to SLIP;
-#X obj 156 315 loadbang;
-#X obj 108 176 bng 15 250 50 0 empty empty data 17 7 0 10 -262144 -1
+#X msg 202 382 close;
+#X text 250 381 Close the port;
+#X text 193 525 Convert from SLIP to a raw OSC message;
+#X obj 162 334 loadbang;
+#X obj 108 124 bng 15 250 50 0 empty empty data 17 7 0 10 -262144 -1
 -1;
-#X obj 473 875 spigot;
-#X obj 511 851 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+#X obj 479 894 spigot;
+#X obj 517 870 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
 1;
-#X obj 472 919 print debug;
-#X obj 217 758 cnv 15 200 100 empty empty empty 20 12 0 14 -262130
--66577 0;
-#X obj 233 767 loadbang;
-#X msg 233 831 disconnect;
-#X msg 233 799 connect localhost 7001;
-#X text 530 850 Print the message sent by the serial port;
-#X obj 84 147 netreceive -u -b 7000;
-#N canvas 0 50 1091 873 listToSlip 0;
+#X obj 478 938 print debug;
+#X obj 73 724 cnv 15 350 200 empty empty SEND_BYTES(LIST)_TO_UDP 0
+-10 0 14 -262130 -66577 0;
+#X obj 239 786 loadbang;
+#X msg 239 850 disconnect;
+#X msg 239 818 connect localhost 7001;
+#X text 536 869 Print the message sent by the serial port;
+#X obj 84 95 netreceive -u -b 7000;
+#X obj 84 437 comport/comport;
+#X obj 199 248 bng 15 250 50 0 empty empty error 17 7 0 10 -262144
+-1 -1;
+#X obj 178 553 bng 15 250 50 0 empty empty error 17 7 0 10 -262144
+-1 -1;
+#X obj 101 466 bng 15 250 50 0 empty empty data 17 7 0 10 -262144 -1
+-1;
+#X obj 197 607 bng 15 250 50 0 empty empty error 17 7 0 10 -262144
+-1 -1;
+#X obj 85 881 netsend -u -b;
+#X obj 479 713 oscparse;
+#X text 542 714 Convert raw OSC to PD message;
+#X obj 479 742 list trim;
+#X obj 85 736 list prepend send;
+#X obj 85 762 list trim;
+#X floatatom 538 819 5 0 0 0 - - -;
+#X floatatom 595 819 5 0 0 0 - - -;
+#X obj 652 822 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 477 95 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X floatatom 682 95 5 0 255 0 - - -;
+#X obj 538 785 route pot photo button;
+#X obj 477 128 oscformat -f i led;
+#X obj 682 127 oscformat -f i pwm;
+#X text 521 762 WARNING: oscparse removes the / from the address;
+#X text 211 222 Convert from byte list (raw OSC) to SLIP;
+#X text 64 5 This patcher was created by Thomas O Fredericks on 2022-11-27
+and it requires the following additionnal library/object: comport;
+#X text 475 149 WARNING: oscfornat automatically prefixes / to the
+address;
+#N canvas 0 50 1091 873 bytesToSlip 0;
 #X obj 258 613 list store;
 #X msg 602 532 append \$1;
 #X obj 574 456 select 192 219;
@@ -148,13 +141,8 @@ of objects : mrpeach \, comport and cyclone;
 #X connect 15 2 9 0;
 #X connect 15 3 6 0;
 #X connect 16 0 13 1;
-#X restore 84 233 pd listToSlip;
-#X obj 78 418 comport/comport;
-#X obj 173 257 bng 15 250 50 0 empty empty error 17 7 0 10 -262144
--1 -1;
-#X text 157 555 Error checking : make sure the packet size is a multiple
-of 4;
-#N canvas 0 50 1195 915 slipToList 0;
+#X restore 86 223 pd bytesToSlip;
+#N canvas 0 50 1195 915 slipToBytes 0;
 #X obj 292 702 list store;
 #X obj 293 806 route bang;
 #X obj 281 309 select 192;
@@ -248,62 +236,76 @@ of 4;
 #X connect 18 0 8 0;
 #X connect 19 0 9 0;
 #X connect 19 1 10 0;
-#X restore 78 504 pd slipToList;
-#X obj 171 530 bng 15 250 50 0 empty empty error 17 7 0 10 -262144
--1 -1;
-#X obj 95 447 bng 15 250 50 0 empty empty data 17 7 0 10 -262144 -1
--1;
-#X obj 187 589 bng 15 250 50 0 empty empty error 17 7 0 10 -262144
--1 -1;
-#X obj 79 862 netsend -u -b;
-#X obj 473 694 oscparse;
-#X text 536 695 Convert raw OSC to PD message;
-#X obj 473 723 list trim;
-#X obj 79 717 list prepend send;
-#X obj 79 743 list trim;
-#X floatatom 532 800 5 0 0 0 - - -;
-#X floatatom 589 800 5 0 0 0 - - -;
-#X obj 646 803 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#X obj 477 95 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
-1;
-#X floatatom 682 95 5 0 255 0 - - -;
-#X obj 532 766 route pot photo button;
-#X obj 477 128 oscformat -f i led;
-#X obj 682 127 oscformat -f i pwm;
-#X text 515 743 WARNING: oscparse removes the / from the address;
-#X text 481 149 WARNING: oscfornat automatically adds the / to the
-address;
-#X connect 7 0 29 0;
-#X connect 9 0 29 0;
-#X connect 12 0 29 0;
-#X connect 14 0 37 0;
-#X connect 14 0 40 0;
-#X connect 14 1 35 0;
-#X connect 17 0 9 0;
-#X connect 19 0 21 0;
-#X connect 20 0 19 1;
-#X connect 23 0 25 0;
-#X connect 24 0 36 0;
-#X connect 25 0 36 0;
-#X connect 27 0 28 0;
-#X connect 27 0 18 0;
-#X connect 28 0 29 0;
-#X connect 28 1 30 0;
-#X connect 29 0 32 0;
-#X connect 29 0 34 0;
-#X connect 29 1 6 0;
-#X connect 32 0 14 0;
-#X connect 32 1 33 0;
-#X connect 37 0 39 0;
-#X connect 39 0 19 0;
-#X connect 39 0 47 0;
-#X connect 40 0 41 0;
-#X connect 41 0 36 0;
-#X connect 45 0 48 0;
-#X connect 46 0 49 0;
-#X connect 47 0 42 0;
-#X connect 47 1 43 0;
-#X connect 47 2 44 0;
-#X connect 48 0 28 0;
-#X connect 49 0 28 0;
+#X restore 85 529 pd slipToBytes;
+#X text 209 577 Error checking : make sure the packet size is a multiple
+of 4;
+#N canvas 156 156 1101 683 sizeIsMultOf4 0;
+#X obj 157 132 list length;
+#X obj 161 161 % 4;
+#X obj 168 199 == 0;
+#X obj 236 245 select 0;
+#N canvas 182 182 896 652 switcher 0;
+#X obj 217 67 inlet;
+#X obj 230 412 outlet out0;
+#X obj 432 408 outlet out1;
+#X obj 392 65 inlet select outlet;
+#X obj 270 281 route 0 1;
+#X obj 265 222 list prepend 0;
+#X connect 0 0 5 0;
+#X connect 3 0 5 1;
+#X connect 4 0 1 0;
+#X connect 4 1 2 0;
+#X connect 5 0 4 0;
+#X restore 104 312 pd switcher;
+#X obj 103 96 t a a b;
+#X msg 270 90 0;
+#X msg 238 284 1;
+#X obj 246 434 outlet error;
+#X obj 105 431 outlet valid;
+#X obj 102 37 inlet list;
+#X connect 0 0 1 0;
+#X connect 1 0 2 0;
+#X connect 2 0 3 0;
+#X connect 3 0 7 0;
+#X connect 4 0 9 0;
+#X connect 4 1 8 0;
+#X connect 5 0 4 0;
+#X connect 5 1 0 0;
+#X connect 5 2 6 0;
+#X connect 6 0 4 1;
+#X connect 7 0 4 1;
+#X connect 10 0 5 0;
+#X restore 85 580 pd sizeIsMultOf4;
+#X connect 7 0 26 0;
+#X connect 9 0 26 0;
+#X connect 12 0 26 0;
+#X connect 15 0 9 0;
+#X connect 17 0 19 0;
+#X connect 18 0 17 1;
+#X connect 21 0 23 0;
+#X connect 22 0 31 0;
+#X connect 23 0 31 0;
+#X connect 25 0 49 0;
+#X connect 25 0 16 0;
+#X connect 26 0 50 0;
+#X connect 26 0 29 0;
+#X connect 26 1 6 0;
+#X connect 32 0 34 0;
+#X connect 34 0 17 0;
+#X connect 34 0 42 0;
+#X connect 35 0 36 0;
+#X connect 36 0 31 0;
+#X connect 40 0 43 0;
+#X connect 41 0 44 0;
+#X connect 42 0 37 0;
+#X connect 42 1 38 0;
+#X connect 42 2 39 0;
+#X connect 43 0 49 0;
+#X connect 44 0 49 0;
+#X connect 49 0 26 0;
+#X connect 49 1 27 0;
+#X connect 50 0 52 0;
+#X connect 50 1 28 0;
+#X connect 52 0 32 0;
+#X connect 52 0 35 0;
+#X connect 52 1 30 0;
