@@ -229,13 +229,6 @@ public:
 	* Send a single Int64 OSC message
 	*/
 	void sendInt64(const char *address, uint64_t h);
-	/**
-	* Send a single Int64 OSC message
-	*/
-	void sendInt64(const char *address, uint64_t h);
-
-
-
 };
 
 

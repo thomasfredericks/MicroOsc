@@ -1,81 +1,117 @@
 // MicroOsc_Demo_SLIP
 // by Thomas O Fredericks
-// 2022-10-26
+// 2022-12-21
 
 // HARDWARE REQUIREMENTS
 // ==================
-// Potentiometer connected to analog pin A0
-// Photocell connected to analog pin A1
-// Switch connected to pin 2
-// LED connected to pin 3
+// - Potentiometer connected to analog pin A0
+// - Photocell connected to analog pin A1
+// - Switch connected to pin 2
+// - LED connected to pin 3
 
 // REQUIRED LIBRARIES
 // ==================
-// MicroOsc
+// - MicroOsc
 
 // REQUIRED CONFIGURATION
 // ======================
-// Set Serial baud to 115200
+// - Set the baud of your computer's serial connection to 115200
 
-
+#include <MicroOsc.h>
+#include <MicroOscUdp.h>
 #include <MicroOscSlip.h>
+
 // The number 64 between the < > below  is the maximum number of bytes reserved for incomming messages.
 // Outgoing messages are written directly to the output and do not need more reserved bytes.
 MicroOscSlip<64> myMicroOsc(&Serial);
 
 unsigned long myChronoStart = 0;
 
-const int myPotPin = A0;
-int myPotPreviousValue;
+// POTENTIOMETER
+int  myPotPin = A0;
+int  myPotStoredValue = 0;
 
-const int myPhotoPin = A1;
-int myPhotoPreviousValue;
+// PHOTOCELL
+int myPhotoPin = A1;
+int myPhotoStoredValue = 0;
 
-const int myButtonPin = 2;
-int myButtonPreviousValue;
+// BUTTON
+int myButtonPin = 2;
+int myButtonSotredValue = 0;
 
-const int myLedPin = 3;
+// LED
+int myLedPin = 3;
 
+/********
+  SETUP
+*********/
 void setup() {
-  // INITIATE SERIAL COMMUNICATION
-  Serial.begin(115200);
-  pinMode( myPotPin , INPUT);  // ANALOG INPUT
-  pinMode( myPhotoPin , INPUT);  // ANALOG INPUT
-  pinMode( myButtonPin , INPUT_PULLUP);  // DIGITAL INPUT
-  pinMode( myLedPin , OUTPUT); // DIGITAL OUTPUT
+  Serial.begin(115200); // START SERIAL COMMUNICATION
+  pinMode( myPotPin , INPUT);  // POTENTIOMETER: ANALOG INPUT
+  pinMode( myPhotoPin , INPUT);  // PHOTOCELL: ANALOG INPUT
+  pinMode( myButtonPin , INPUT_PULLUP);  // BUTTON: DIGITAL INPUT
+  pinMode( myLedPin , OUTPUT); // LED: DIGITAL OUTPUT
 }
 
-// FUNCTION THAT IS CALLED FOR EVERY RECEIVED MESSAGE
-void myReceiveOscMessage( MicroOscMessage & myOscMessage ) {
-  if ( myOscMessage.fullMatch("/led") ) { // IF THE ADDRESS IS /led
-    int myLedValue = myOscMessage.nextAsInt(); // GET VALUE AS INT
-    digitalWrite( myLedPin , myLedValue); // SET LED VALUE TO LED
+/****************
+  ON OSC MESSAGE
+*****************/
+void myOnOscMessageReceived( MicroOscMessage& oscMessage ) { 
+  if ( oscMessage.checkOscAddress("/led") ) { // IF THE ADDRESS IS /led
+    int newValue = oscMessage.nextAsInt(); // GET NEW VALUE AS INT
+    digitalWrite( myLedPin , newValue); // SET LED OUTPUT TO VALUE
   }
 }
 
-void loop() {
-  myMicroOsc.receiveMessages( myReceiveOscMessage );
+/****************
+  POTENTIOMETER UPDATE
+****************/
+void myPotUpdateValueAndSendIfChanged() {
+  int newValue = analogRead(myPotPin); // READ NEW VALUE
+  if ( newValue != myPotStoredValue ) { // IF NEW VALUE DIFFERENT THAN STORED VALUE
+    myPotStoredValue = newValue; // STORE NEW VALUE
+    myMicroOsc.sendInt( "/pot" , myPotStoredValue  ); // SEND UPDATED VALUE
+  }
+}
 
-  unsigned long myChronoElapsed = millis() - myChronoStart;
-  unsigned long myChronoInterval = 50;
-  if ( myChronoElapsed >= myChronoInterval) {
+/*********************
+  PHOTOCELL UPDATE
+**********************/
+void myPhotoUpdateValueAndSendIfChanged() {
+    int newValue = analogRead(myPhotoPin); // READ CURRENT VALUE
+    if ( newValue != myPhotoStoredValue) { // IF NEW VALUE DIFFERENT THAN STORED VALUE
+      myPhotoStoredValue = newValue; // STORE NEW VALUE
+      myMicroOsc.sendInt( "/photo"  , myPhotoStoredValue ); // SEND UPDATED VALUE
+
+    }  
+}
+
+/*********************
+  BUTTON UPDATE
+**********************/
+void myButtonUpdateValueAndSendIfChanged() {
+    int newValue = digitalRead(myButtonPin); // READ CURRENT VALUE
+    if ( newValue != myButtonSotredValue ) { // IF NEW VALUE DIFFERENT THAN STORED VALUE
+      myButtonSotredValue = newValue; // STORE NEW VALUE
+      myMicroOsc.sendInt( "/button"  , myButtonSotredValue  ); // SEND UPDATED VALUE
+    }  
+}
+
+/*******
+  LOOP
+********/
+void loop() {
+
+  myMicroOsc.onOscMessageReceived( myOnOscMessageReceived ); // TRIGGER OSC RECEPTION
+
+  if ( millis() - myChronoStart >= 50) { // IF 50 MS HAVE ELLAPSED
     myChronoStart = millis(); // RESTART CHRONO
 
-    // POTENTIOMETER
-    int myPotValue = analogRead(myPotPin); // READ CURRENT VALUE
-    if ( myPotValue != myPotPreviousValue ) myMicroOsc.sendInt( "/pot" , myPotValue  );
-    myPotPreviousValue = myPotValue; // STORE CURRENT VALUE
-    
-    // PHOTOCELL
-    int myPhotoValue = analogRead(myPhotoPin); // READ CURRENT VALUE
-    if ( myPhotoValue != myPhotoPreviousValue ) myMicroOsc.sendInt( "/photo"  , myPhotoValue  );
-    myPhotoPreviousValue = myPhotoValue; // STORE CURRENT VALUE
+    myPotUpdateValueAndSendIfChanged(); // POTENTIOMETER UPDATE
 
-    // BUTTON
-    int myButtonValue = digitalRead(myButtonPin); // READ CURRENT VALUE
-    if ( myButtonValue != myButtonPreviousValue ) myMicroOsc.sendInt( "/button"  ,myButtonValue  );
-    myButtonPreviousValue = myButtonValue; // STORE CURRENT VALUE
+    myPhotoUpdateValueAndSendIfChanged(); // PHOTOCELL UPDATE
+
+    myButtonUpdateValueAndSendIfChanged(); // BUTTON UPDATE
 
   }
-  
 }
