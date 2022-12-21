@@ -147,40 +147,20 @@ class MicroOscSlip : public MicroOsc {
 
     }
 
-    void receiveMessages(tOscCallbackFunction callback) {
+
+    virtual void onOscMessageReceived(tOscCallbackFunction callback) {
 
       size_t packetLength = slip.parsePacket(inputBuffer, MICRO_OSC_IN_SIZE );
       if ( packetLength > 0 ) {
         MicroOsc::parseMessages( callback , inputBuffer , packetLength );
       }
-
     }
-/*
-    void sendMessage(const char *address, const char *format, ...) {
-      
-      va_list ap;
-      va_start(ap, format);
-      vprint(address, format, ap);
-      va_end(ap);
-      
+   
+    [[deprecated("Use onOscMessageReceived(callback) instead.")]]
+    void receiveMessages(tOscCallbackFunction callback) {
+        onOscMessageReceived(callback);
     }
-*/
-	
-    /*
-	void sendMessage2(const char *address, ...) {
-		
-		 slip.beginPacket();
-		 
-         va_list ap;
-         va_start(ap, address);
 
-        vprint(&slip, address, format, ap);
-        va_end(ap);
-		
-        slip.endPacket(); 
-		
-	}
-*/
 
 };
 

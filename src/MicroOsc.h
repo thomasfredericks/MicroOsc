@@ -3,6 +3,8 @@
  * Inspired by TinyOsc https://github.com/mhroth/TinyOsc by Martin Roth (mhroth@gmail.com)
  */
 
+
+
 #ifndef _MICRO_OSC_
 #define _MICRO_OSC_
 
@@ -14,12 +16,6 @@
 
 //#define MICRO_OSC_DEBUG
 
-typedef struct uOscBundle {
-  unsigned char* marker; // the current write head (where the next message will be written)
-  unsigned char* buffer; // the original buffer
-  size_t bufLen; // the byte length of the original buffer
-  size_t bundleLen; // the byte length of the total bundle
-} uOscBundle;
 
 
 class MicroOscMessage {
@@ -35,15 +31,27 @@ class MicroOscMessage {
 
 
 	MicroOscMessage();
+  
+  /**
+  * Returns `true` if the address matches exactly
+  */
+  bool checkOscAddress(const char* address);
+
+    /**
+  * Returns `true` if the address and argument type tags match exactly. 
+  */
+  bool checkOscAddress(const char* address,const char * typetags);
 
   /**
   * Returns `true` if the address matches exactly
   */
+  [[deprecated("Use checkOscAddress(address) instead.")]]
 	bool fullMatch(const char* address);
 
 /**
 * Returns true if the address and argument type tags match exactly.
 */
+	[[deprecated("Use checkOscAddress(address,typetags) instead.")]]
 	bool fullMatch(const char* address, const char * typetags);
 
 
@@ -89,6 +97,7 @@ class MicroOscMessage {
 
 class MicroOsc
 {
+
 	 public:
 	 	typedef void (*tOscCallbackFunction)(MicroOscMessage&);
 
@@ -97,9 +106,16 @@ class MicroOsc
 
 
  private:
+		 	struct uOscBundle {
+			  unsigned char* marker; // the current write head (where the next message will be written)
+			  unsigned char* buffer; // the original buffer
+			  size_t bufLen; // the byte length of the original buffer
+			  size_t bundleLen; // the byte length of the total bundle
+			} ;
+
      	//unsigned char *buffer;
      	//int len;
-     	uOscBundle bundle;
+     	struct uOscBundle bundle;
      	//uOscBundle* b;
      	//tosc_message* o;
      	MicroOscMessage message;
@@ -176,6 +192,7 @@ protected:
 	
 
 public:
+	virtual void onOscMessageReceived(tOscCallbackFunction callback) = 0;
 	void sendMessage(const char *address, const char *format, ...);
 	void sendInt(const char *address, int32_t i);
 	void sendFloat(const char *address, float f);

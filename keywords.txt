@@ -15,20 +15,22 @@ MicroOscUdp	KEYWORD1
 # Methods and Functions (KEYWORD2)
 #######################################
 
-fullMatch	KEYWORD2
-getAddress	KEYWORD2
-getFormat	KEYWORD2
-parse	KEYWORD2
+checkOscAddress	KEYWORD2
+onOscMessageReceived	KEYWORD2
 writeMessage	KEYWORD2
 nextAsInt	KEYWORD2
-getnextAsInt64	KEYWORD2
-getNextTimetag	KEYWORD2
 nextAsFloat	KEYWORD2
-getNextDouble	KEYWORD2
 nextAsString	KEYWORD2
 nextAsBlob	KEYWORD2
 nextAsMidi	KEYWORD2
-
+sendMessage	KEYWORD2
+sendInt		KEYWORD2
+sendFloat	KEYWORD2
+sendString	KEYWORD2
+sendBlob	KEYWORD2
+sendDouble	KEYWORD2
+sendMidi	KEYWORD2
+sendInt64	KEYWORD2
 #######################################
 # Instances (KEYWORD2)
 #######################################

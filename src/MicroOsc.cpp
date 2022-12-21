@@ -402,14 +402,21 @@ const char* MicroOscMessage::nextAsString() {
 }
 
 
-
-bool MicroOscMessage::fullMatch(const char* address) {
-
+bool MicroOscMessage::checkOscAddress(const char* address) {
     return (strcmp( (const char *) buffer, address) == 0);
 }
 
-bool MicroOscMessage::fullMatch(const char* address, const char * typetags){
+bool MicroOscMessage::checkOscAddress(const char* address, const char * typetags){
    return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
+}
+
+
+bool MicroOscMessage::fullMatch(const char* address) {
+    return checkOscAddress(address);
+}
+
+bool MicroOscMessage::fullMatch(const char* address, const char * typetags){
+   return checkOscAddress(address,typetags);
 }
 
 uint32_t MicroOscMessage::nextAsBlob( const unsigned char  **blob) {

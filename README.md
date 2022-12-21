@@ -54,12 +54,42 @@ MicroOsc will probably never support:
 ## Classes
 
 MicroOsc contains 2 classes:
-- **MicroOsc** : the base class
-- **MicroOscMessage** : a received OSC message
+- `MicroOsc` : the main Class
+- `MicroOscMessage` : a received OSC message
+
+## Overview of all OSC receiving methods of MicroOsc
+| `MicroOsc`  Method | Description |
+| --------------- | --------------- |
+| `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
+
+
+## Overview of all OSC parsing methods of MicroOscMessage
+| `MicroOscMessage` Method | Description |
+| --------------- | --------------- |
+| `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
+| `bool checkOscAddress(const char* address)` | Returns `true` if the address matches exactly |
+| `checkOscAddress(const char* address,const char * typetags)` | Returns `true` if the address and argument type tags match exactly |
+| `int32_t nextAsInt()` | Returns the next argument as a 32-bit int |
+| `float nextAsFloat()` | Returns the next argument as a 32-bit float |
+| `const char* nextAsString()` | Treats the next argument as a C string and returns a pointer to the data |
+| `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob of data and fills a pointer with the address to a byte array |
+| `int nextAsMidi(const uint8_t **midiData)` | Treats the next value as MIDI and fills a pointer with the address to the MIDI data 
+
+## Overview of all sending OSC methods of MicroOsc
+| `MicroOsc`  Method | Description |
+| --------------- | --------------- |
+| `void sendInt(const char *address, int32_t i)` | Send a single int OSC message |
+| `void sendFloat(const char *address, float f);` | Send a single float OSC message |
+| `void sendString(const char *address, const char *str)` | Send a single string OSC message |
+| `void sendBlob(const char *address, unsigned char *b, int32_t length)` | Send a single blob (array of bytes) OSC message |
+| `void sendDouble(const char *address,double d)` | Send a single double OSC message |
+| `void sendMidi(const char *address,unsigned char *midi)` |  Send a single MIDI OSC message |
+| `void sendInt64(const char *address, uint64_t h)` | Send a single Int64 OSC message |
+| `void sendMessage(const char *address, const char *format, ...)` | Send an OSC message with any mnumber of arguments of diffrent types |
 
 ## Initialization  
 
-There are currently 2 supported transport protocols. Serial (with SLIP) and UDP. The 2 versions are identical except for their initialization.
+There are currently 2 supported transport protocols. Serial (with SLIP) and UDP (Ethernet or WiFi). The 2 versions are identical except for their initialization.
 
 ### OSC SLIP
 
@@ -114,7 +144,7 @@ void myOscMessageParser( MicroOscMessage& receivedOscMessage) {
 
 In `loop()` you need to trigger the reception of the messages:
 ```cpp
-myOsc.receiveMessages( myOscMessageParser );
+myOsc.onOscMessageReceived( myOscMessageParser );
 ```
 
 ### Check address and argument types of a MicroOscMessage
@@ -127,12 +157,12 @@ MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC 
 /**
 * Returns true if the address matches exactly
 */
-bool fullMatch(const char* address);
+bool checkOscAddress(const char* address);
 ```
 
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
-if ( receivedOscMessage.fullMatch("/pot") ) {
+if ( receivedOscMessage.checkOscAddress("/pot") ) {
 	// ...
 }
 ```
@@ -142,12 +172,12 @@ if ( receivedOscMessage.fullMatch("/pot") ) {
 /**
 * Returns true if the address and argument type tags match exactly.
 */
-bool fullMatch(const char* address, const char * typetags);
+bool checkOscAddress(const char* address, const char * typetags);
 ```
 
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
-if ( receivedOscMessage.fullMatch("/pot", "i") ) {
+if ( receivedOscMessage.checkOscAddress("/pot", "i") ) {
 	// ...
 }
 ```
