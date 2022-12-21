@@ -57,14 +57,14 @@ MicroOsc contains 2 classes:
 - `MicroOsc` : the main Class
 - `MicroOscMessage` : a received OSC message
 
-## Overview of all OSC receiving methods of MicroOsc
-| `MicroOsc`  Method | Description |
+### Overview of all OSC receiving methods of MicroOsc
+| MicroOsc  Method | Description |
 | --------------- | --------------- |
 | `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
 
 
-## Overview of all OSC parsing methods of MicroOscMessage
-| `MicroOscMessage` Method | Description |
+### Overview of all OSC parsing methods of MicroOscMessage
+| MicroOscMessage Method | Description |
 | --------------- | --------------- |
 | `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
 | `bool checkOscAddress(const char* address)` | Returns `true` if the address matches exactly |
@@ -75,8 +75,8 @@ MicroOsc contains 2 classes:
 | `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob of data and fills a pointer with the address to a byte array |
 | `int nextAsMidi(const uint8_t **midiData)` | Treats the next value as MIDI and fills a pointer with the address to the MIDI data 
 
-## Overview of all sending OSC methods of MicroOsc
-| `MicroOsc`  Method | Description |
+### Overview of all sending OSC methods of MicroOsc
+| MicroOsc  Method | Description |
 | --------------- | --------------- |
 | `void sendInt(const char *address, int32_t i)` | Send a single int OSC message |
 | `void sendFloat(const char *address, float f);` | Send a single float OSC message |
