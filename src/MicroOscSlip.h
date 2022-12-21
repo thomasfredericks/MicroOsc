@@ -16,15 +16,6 @@
 #define SLIP_ESC_ESC 0xDD
 
 
-class OscInt {
-	char type = 'i';
-	int32_t value;
-	public:
-	OscInt(int32_t i) : value{ i } {
-	
-	}
-};
-
 
 class MicroSlip : public Print  {
 

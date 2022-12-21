@@ -68,7 +68,7 @@ MicroOsc contains 2 classes:
 | --------------- | --------------- |
 | `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
 | `bool checkOscAddress(const char* address)` | Returns `true` if the address matches exactly |
-| `checkOscAddress(const char* address,const char * typetags)` | Returns `true` if the address and argument type tags match exactly |
+| `bool checkOscAddress(const char* address,const char * typetags)` | Returns `true` if the address and argument type tags match exactly |
 | `int32_t nextAsInt()` | Returns the next argument as a 32-bit int |
 | `float nextAsFloat()` | Returns the next argument as a 32-bit float |
 | `const char* nextAsString()` | Treats the next argument as a C string and returns a pointer to the data |
