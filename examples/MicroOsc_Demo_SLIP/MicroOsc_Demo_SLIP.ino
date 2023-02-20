@@ -1,14 +1,27 @@
 // MicroOsc_Demo_SLIP
 // by Thomas O Fredericks
-// 2022-12-22
+// 2023-02-20
+
+// WHAT IS DOES
+// ======================
+// OSC communication example.
+//
+// OSC messages received by the Arduino :
+// - /led int -> turn off (0) or on (1) a LED 
+// - /pwm int -> set the pwm (0-255) of the arcade button LED 
+//
+// OSC messages sent by the Arduino :
+// - /pot int -> sends the value of a potentiometer 
+// - /photo int -> sends the value of a photocell
+// - /button int -> sends the value of a button
 
 // HARDWARE REQUIREMENTS
 // ==================
 // - POTENTIOMETER connected to analog pin A0
 // - POTOCELL (with voltage resistor) connected to analog pin A1
 // - Illuminated arcade BUTTON with it's switch connected to pin 2
-//   and it's LED connected to pin 3
-// - LED (and matching resistor) connected to pin 5
+//   and it's LED connected to pin 3 (will be PWM modulated)
+// - LED (and matching resistor) connected to pin 5 (will be turned off or on)
 
 // REQUIRED LIBRARIES
 // ==================
@@ -17,6 +30,8 @@
 // REQUIRED CONFIGURATION
 // ======================
 // - Set the baud of your computer's serial connection to 115200
+
+
 
 #include <MicroOscSlip.h>
 
@@ -43,7 +58,7 @@ int myButtonSotredValue = 0;
 int myButtonLedPin = 3;  // PIN MUST SUPPORT PWM
 
 // LED
-int myLedPin = 5;  // PIN MUST SUPPORT PWM
+int myLedPin = 5;
 
 /********
   SETUP
@@ -61,14 +76,17 @@ void setup() {
   ON OSC MESSAGE
 *****************/
 void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
+  
   if (oscMessage.checkOscAddress("/led")) {  // IF THE ADDRESS IS /led
     int newValue = oscMessage.nextAsInt();  // GET NEW VALUE AS INT
-    analogWrite(myLedPin, newValue);       // SET LED OUTPUT TO VALUE (ANALOG/PWM: 0-255)
-
+    digitalWrite(myLedPin, newValue);       // SET LED OUTPUT TO VALUE (DIGITAL: OFF/ON)
+    
   } else if (oscMessage.checkOscAddress("/buttonLed")) {  // IF THE ADDRESS IS /buttonLed
     int newValue = oscMessage.nextAsInt();  // GET NEW VALUE AS INT
-    digitalWrite(myLedPin, newValue);       // SET LED OUTPUT TO VALUE (DIGITAL: OFF/ON)
+    analogWrite(myButtonLedPin, newValue);       // SET LED OUTPUT TO VALUE (ANALOG/PWM: 0-255)
+
   }
+  
 }
 
 /****************
