@@ -124,11 +124,15 @@ Initialize and include MicroOsc:
 MicroOscUdp<1024> myOsc(&myUdp, mySendIp, mySendPort);
 ```
 
-In `setup()` don't forget to start UDP:
+In `setup()` don't forget to start your UDP instance:
 ```cpp
  myUdp.begin(myReceivePort);
 ```
 
+The destination can be changed during runtime:
+```cpp
+myOsc.setDestination(IPAddress destinationIp, unsigned int destinationPort) 
+```
 ## Receive OSC
 
 ### Defining a function for the reception of OSC messages
