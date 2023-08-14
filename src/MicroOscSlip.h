@@ -6,20 +6,27 @@
 #define _MICRO_OSC_SLIP_
 
 #include <MicroOsc.h>
-#include "Print.h"
+
 
 // Internal-> SLIP reserved codes->
 // 192, 219, 220, 221
-#define SLIP_END     0xC0
-#define SLIP_ESC     0xDB
-#define SLIP_ESC_END 0xDC
-#define SLIP_ESC_ESC 0xDD
+//#define SLIP_END     0xC0
+//#define SLIP_ESC     0xDB
+//#define SLIP_ESC_END 0xDC
+//#define SLIP_ESC_ESC 0xDD
 
 
 
 class MicroSlip : public Print  {
 
+
+
  private:
+
+ 	const uint8_t SLIP_END = 192;
+	const uint8_t SLIP_ESC = 219;
+	const uint8_t SLIP_ESC_END = 220;
+	const uint8_t SLIP_ESC_ESC = 221;
 	
 	size_t length =0;
 	size_t parseIndex=0;
@@ -53,6 +60,12 @@ class MicroSlip : public Print  {
 		      } else if ( error == false ) {
 		        // ESCAPING
 		        if ( escaping ) {
+		        	if ( streamByte ==  SLIP_ESC_END ) {
+		        		buffer[parseIndex++]=SLIP_END; 
+		        	} else if ( streamByte ==  SLIP_ESC_END ) {
+		        		buffer[parseIndex++]=SLIP_ESC;
+		        	}
+/*
 		          switch (streamByte) {
 		          case SLIP_ESC_END:
 		            buffer[parseIndex++]=SLIP_END; 
@@ -61,6 +74,7 @@ class MicroSlip : public Print  {
 		            buffer[parseIndex++]=(SLIP_ESC);
 		            break;
 		          }
+*/
 		          escaping = false;
 		        } else {
 		          // NON ESCAPING
@@ -83,20 +97,21 @@ class MicroSlip : public Print  {
   
   // virtual size_t write(uint8_t) = 0;
 	virtual size_t  write(uint8_t value) {
-		switch (value)
-				{
-					case SLIP_END:
-						stream->write(SLIP_ESC);
-						stream->write(SLIP_ESC_END);
-						break;
-					case SLIP_ESC:
-						stream->write(SLIP_ESC);
-						stream->write(SLIP_ESC_ESC);
-						break;
-					default:
-						stream->write(value);
-				}
-				return 1;
+
+		if ( value == 192) {
+				stream->write(SLIP_ESC);
+				stream->write(SLIP_ESC_END);
+				return 2;
+		} else if ( value == SLIP_ESC ) {
+			  stream->write(SLIP_ESC);
+				stream->write(SLIP_ESC_ESC);
+				return 2;
+		} else {
+			stream->write(value);
+			return 1;
+		}
+
+				
 	}
 
 	virtual void beginPacket() {
@@ -134,7 +149,7 @@ class MicroOscSlip : public MicroOsc {
 	}
 
   public:
-    MicroOscSlip(Stream * stream) : MicroOsc(stream), slip(stream) {
+    MicroOscSlip(Stream * stream) : slip(stream), MicroOsc(&slip) {
 
     }
 
