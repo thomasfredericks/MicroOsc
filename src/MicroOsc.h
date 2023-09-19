@@ -8,8 +8,10 @@
 #ifndef _MICRO_OSC_
 #define _MICRO_OSC_
 
+#include <Arduino.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #include "Print.h"
 
