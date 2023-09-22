@@ -19,9 +19,18 @@ class MicroOscUdp : public MicroOsc {
 
     protected:
 	virtual void beginMessage() {
+    /*
+    Serial.print("Begin UDP OSC IP: ");
+    Serial.print(destinationIp);
+    Serial.print(". Port: ");
+    Serial.println(destinationPort);
+    */
 		udp->beginPacket(destinationIp, destinationPort);
 	}
 	virtual void endMessage() {
+    /*
+    Serial.println("End UDP OSC");
+    */
 		 udp->endPacket(); 
 	}
 

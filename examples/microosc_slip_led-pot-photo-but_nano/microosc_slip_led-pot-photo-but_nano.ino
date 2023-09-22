@@ -4,7 +4,7 @@
 
 // WHAT IS DOES
 // ======================
-// OSC communication example.
+// OSC communication example for the Arduino Nano.
 //
 // OSC messages received by the Arduino :
 // - /led int -> turn off (0) or on (1) a LED 
@@ -43,16 +43,13 @@ MicroOscSlip<64> myMicroOsc(&Serial);  // CREATE AN INSTANCE OF MicroOsc FOR SLI
 unsigned long myChronoStart = 0;  // VARIABLE USED TO LIMIT THE SPEED OF THE loop() FUNCTION.
 
 // POTENTIOMETER
-int myPotPin = A0;
-int myPotStoredValue = 0;
+int myPotPin = 0;
 
 // PHOTOCELL
-int myPhotoPin = A1;
-int myPhotoStoredValue = 0;
+int myPhotoPin = 1;
 
 // BUTTON
 int myButtonPin = 2;
-int myButtonSotredValue = 0;
 
 // BUTON LED
 int myButtonLedPin = 3;  // PIN MUST SUPPORT PWM
@@ -89,38 +86,6 @@ void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
   
 }
 
-/****************
-  POTENTIOMETER UPDATE
-****************/
-void myPotUpdateValueAndSendIfChanged() {
-  int newValue = analogRead(myPotPin);             // READ NEW VALUE
-  if (newValue != myPotStoredValue) {              // IF NEW VALUE DIFFERENT THAN STORED VALUE
-    myPotStoredValue = newValue;                   // STORE NEW VALUE
-    myMicroOsc.sendInt("/pot", myPotStoredValue);  // SEND UPDATED VALUE
-  }
-}
-
-/*********************
-  PHOTOCELL UPDATE
-**********************/
-void myPhotoUpdateValueAndSendIfChanged() {
-  int newValue = analogRead(myPhotoPin);               // READ CURRENT VALUE
-  if (newValue != myPhotoStoredValue) {                // IF NEW VALUE DIFFERENT THAN STORED VALUE
-    myPhotoStoredValue = newValue;                     // STORE NEW VALUE
-    myMicroOsc.sendInt("/photo", myPhotoStoredValue);  // SEND UPDATED VALUE
-  }
-}
-
-/*********************
-  BUTTON UPDATE
-**********************/
-void myButtonUpdateValueAndSendIfChanged() {
-  int newValue = digitalRead(myButtonPin);               // READ CURRENT VALUE
-  if (newValue != myButtonSotredValue) {                 // IF NEW VALUE DIFFERENT THAN STORED VALUE
-    myButtonSotredValue = newValue;                      // STORE NEW VALUE
-    myMicroOsc.sendInt("/button", myButtonSotredValue);  // SEND UPDATED VALUE
-  }
-}
 
 /*******
   LOOP
@@ -132,10 +97,10 @@ void loop() {
   if (millis() - myChronoStart >= 50) {  // IF 50 MS HAVE ELLAPSED
     myChronoStart = millis();            // RESTART CHRONO
 
-    myPotUpdateValueAndSendIfChanged();  // POTENTIOMETER UPDATE
+    myMicroOsc.sendInt("/pot", analogRead(myPotPin) );  // SEND POTENTIOMETER
 
-    myPhotoUpdateValueAndSendIfChanged();  // PHOTOCELL UPDATE
+    myMicroOsc.sendInt("/photo", analogRead(myPhotoPin) );  // SEND PHOTOCELL
 
-    myButtonUpdateValueAndSendIfChanged();  // BUTTON UPDATE
+    myMicroOsc.sendInt("/button", digitalRead(myButtonPin));  // SEND BUTTON
   }
 }
