@@ -70,13 +70,15 @@ void setup() {
   Serial.begin(115200);
 
   delay(2000);
-  
+
+  Serial.println("Starting Ethernet with STATIC IP");
   // CONFIGURE ETHERNET
   SPI.begin(22, 23, 33, 19);
   Ethernet.init(19);
   uint8_t myMac[6];
   // GET FACTORY DEFINED ESP32 MAC :
   esp_efuse_mac_get_default(myMac);
+  // START ETHERNET WITH STATIC IP
   Ethernet.begin(myMac, myIp);
 
   myUdp.begin(myPort);
