@@ -62,7 +62,7 @@ class MicroSlip : public Print  {
 		        if ( escaping ) {
 		        	if ( streamByte ==  SLIP_ESC_END ) {
 		        		buffer[parseIndex++]=SLIP_END; 
-		        	} else if ( streamByte ==  SLIP_ESC_END ) {
+		        	} else if ( streamByte ==  SLIP_ESC_ESC ) {
 		        		buffer[parseIndex++]=SLIP_ESC;
 		        	}
 /*
