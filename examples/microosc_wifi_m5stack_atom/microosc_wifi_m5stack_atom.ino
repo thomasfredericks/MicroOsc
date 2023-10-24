@@ -70,7 +70,16 @@ void setup() {
 
   Serial.begin(115200);
   
-  delay(2000);
+  // Start-up animation
+  // Gives time for the USB drivers to settle
+  while ( millis() < 5000) {
+    mesPixels[0] = CHSV( (millis()/5) % 255,255,255-(millis()*255/5000));
+    FastLED.show();
+    delay(50);
+  } 
+  mesPixels[0] = CRGB(0,0,0);
+  FastLED.show();
+
   Serial.println();
 
   // START WIFI
@@ -82,6 +91,8 @@ void setup() {
   else Serial.println("Failed to connect to WiFi");
 
   myUdp.begin(myPort);
+
+
   
   Serial.println();
   Serial.println(__FILE__);

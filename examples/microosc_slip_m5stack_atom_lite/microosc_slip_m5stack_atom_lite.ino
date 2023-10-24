@@ -50,12 +50,21 @@ void setup() {
 
   Serial.begin(115200);
 
+  // Start-up animation
+  // Gives time for the USB drivers to settle
+  while (millis() < 5000) {
+    mesPixels[0] = CHSV((millis() / 5) % 255, 255, 255 - (millis() * 255 / 5000));
+    FastLED.show();
+    delay(50);
+  }
+  mesPixels[0] = CRGB(0, 0, 0);
+  FastLED.show();
 }
 
 /****************
   myOnOscMessageReceived is triggered when a message is received
 *****************/
-void myOnOscMessageReceived( MicroOscMessage & oscMessage ) {
+void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
 
   // CHECK THE ADDRESS OF THE OSC MESSAGE
   if (oscMessage.checkOscAddress("/pixel")) {
@@ -65,7 +74,7 @@ void myOnOscMessageReceived( MicroOscMessage & oscMessage ) {
     int blue = oscMessage.nextAsInt();
     mesPixels[0] = CRGB(red, green, blue);
     FastLED.show();
-  
+
   } else if (oscMessage.checkOscAddress("/address")) {
 
     // USE THE FOLLOWING METHODS TO PARSE INDIVIDUAL ARGUMENTS :
@@ -83,9 +92,7 @@ void myOnOscMessageReceived( MicroOscMessage & oscMessage ) {
       const uint8_t* midi;
       receivedOscMessage.nextAsMidi(&midi);
     */
-
   }
-
 }
 
 /*******
@@ -102,7 +109,7 @@ void loop() {
   if (millis() - myChronoStart >= 50) {  // IF 50 MS HAVE ELLAPSED
     myChronoStart = millis();            // RESTART CHRONO
 
-    myMicroOsc.sendInt( "/millis" , millis() );
+    myMicroOsc.sendInt("/millis", millis());
 
     // USE THE FOLLOWING METHODS TO SEND OSC MESSAGES :
     /*
@@ -124,5 +131,4 @@ void loop() {
       myMicroOsc.sendMessage(const char *address, const char *format, ...);
     */
   }
-
 }

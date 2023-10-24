@@ -67,6 +67,9 @@ void setup() {
   pinMode(myButtonPin, INPUT_PULLUP);  // BUTTON: DIGITAL INPUT
   pinMode(myButtonLedPin, OUTPUT);     // LED: DIGITAL OUTPUT
   pinMode(myLedPin, OUTPUT);           // LED: DIGITAL OUTPUT
+
+  // Gives time for the USB drivers to settle
+  delay(5000);
 }
 
 /****************

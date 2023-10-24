@@ -35,15 +35,15 @@
 CRGB mesPixels[1];
 
 #include <SPI.h>
-#include <M5_Ethernet.h>
+#include <Ethernet.h>
 // An EthernetUDP instance to let us send and receive packets over UDP
 EthernetUDP myUdp;
 
 IPAddress myDestinationIp(10, 1, 2, 3);
-unsigned int myDestinationPort = 7777;
+unsigned int myDestinationPort = 7001;
 
 IPAddress myIp(10, 1, 2, 101);
-unsigned int myPort = 8888;
+unsigned int myPort = 7000;
 
 
 #include <MicroOscUdp.h>
@@ -52,7 +52,7 @@ unsigned int myPort = 8888;
 // OUTGOING MESSAGES ARE WRITTEN DIRECTLY TO THE OUTPUT AND DO NOT NEED ANY RESERVED BYTES.
 // PROVIDE A POINTER TO UDP, AND THE IP AND PORT FOR OUTGOING MESSAGES.
 // DO NOT FORGET THAT THE UDP CONNEXION MUST BE INITIALIZED IN SETUP() WITH THE RECEIVE PORT.
-MicroOscUdp<1024> myMicroOsc( &myUdp, myDestinationIp, myDestinationPort );  // CREATE AN INSTANCE OF MicroOsc FOR UDP MESSAGES
+MicroOscUdp<1024> myMicroOsc(&myUdp, myDestinationIp, myDestinationPort);  // CREATE AN INSTANCE OF MicroOsc FOR UDP MESSAGES
 
 unsigned long myChronoStart = 0;  // VARIABLE USED TO LIMIT THE SPEED OF THE SENDING OF OSC MESSAGES
 
@@ -69,8 +69,17 @@ void setup() {
 
   Serial.begin(115200);
 
-  delay(2000);
-
+  // Start-up animation
+  // Gives time for the USB drivers to settle
+  while (millis() < 5000) {
+    mesPixels[0] = CHSV((millis() / 5) % 255, 255, 255 - (millis() * 255 / 5000));
+    FastLED.show();
+    delay(50);
+  }
+  mesPixels[0] = CRGB(0, 0, 0);
+  FastLED.show();
+  
+  Serial.println();
   Serial.println("Starting Ethernet with STATIC IP");
   // CONFIGURE ETHERNET
   SPI.begin(22, 23, 33, 19);
@@ -82,7 +91,7 @@ void setup() {
   Ethernet.begin(myMac, myIp);
 
   myUdp.begin(myPort);
-  
+
   Serial.println();
   Serial.println(__FILE__);
   Serial.print("myDestinationIp: ");
@@ -93,13 +102,12 @@ void setup() {
   Serial.println(Ethernet.localIP());
   Serial.print("myPort: ");
   Serial.println(myPort);
-
 }
 
 /****************
   myOnOscMessageReceived is triggered when a message is received
 *****************/
-void myOnOscMessageReceived( MicroOscMessage & oscMessage ) {
+void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
 
   // CHECK THE ADDRESS OF THE OSC MESSAGE
   if (oscMessage.checkOscAddress("/pixel")) {
@@ -109,7 +117,7 @@ void myOnOscMessageReceived( MicroOscMessage & oscMessage ) {
     int blue = oscMessage.nextAsInt();
     mesPixels[0] = CRGB(red, green, blue);
     FastLED.show();
-  
+
   } else if (oscMessage.checkOscAddress("/address")) {
 
     // USE THE FOLLOWING METHODS TO PARSE INDIVIDUAL ARGUMENTS :
@@ -127,9 +135,7 @@ void myOnOscMessageReceived( MicroOscMessage & oscMessage ) {
       const uint8_t* midi;
       receivedOscMessage.nextAsMidi(&midi);
     */
-
   }
-
 }
 
 /*******
@@ -146,7 +152,7 @@ void loop() {
   if (millis() - myChronoStart >= 50) {  // IF 50 MS HAVE ELLAPSED
     myChronoStart = millis();            // RESTART CHRONO
 
-    myMicroOsc.sendInt( "/millis" , millis() );
+    myMicroOsc.sendInt("/millis", millis());
 
     // USE THE FOLLOWING METHODS TO SEND OSC MESSAGES :
     /*
@@ -168,5 +174,4 @@ void loop() {
       myMicroOsc.sendMessage(const char *address, const char *format, ...);
     */
   }
-
 }
