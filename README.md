@@ -1,6 +1,6 @@
 # MicroOsc
 
-MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for Arduino and Teensy. 
+MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for the Arduino frameworks that supports Arduino, Teensy, esp8266 and ESP32 platforms. 
 MicroOsc provides a unified API to work over Serial (Slip) ad over UDP (Ethernet or Wifi). 
 It does not hold on to state and error checking is minimal.
 A few Arduino and application (Pure Data, Max, Node JS) examples are included.
