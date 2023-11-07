@@ -1,6 +1,6 @@
 # MicroOsc
 
-MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for Arduino. 
+MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for Arduino and Teensy. 
 MicroOsc provides a unified API to work over Serial (Slip) ad over UDP (Ethernet or Wifi). 
 It does not hold on to state and error checking is minimal.
 A few Arduino and application (Pure Data, Max, Node JS) examples are included.
@@ -167,7 +167,7 @@ bool checkOscAddress(const char* address);
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 if ( receivedOscMessage.checkOscAddress("/pot") ) {
-	// ...
+  // ...
 }
 ```
 
@@ -182,7 +182,7 @@ bool checkOscAddress(const char* address, const char * typetags);
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 if ( receivedOscMessage.checkOscAddress("/pot", "i") ) {
-	// ...
+  // ...
 }
 ```
 ### Get argument values of a MicroOscMessage
@@ -267,7 +267,7 @@ receivedOscMessage.nextAsMidi(&midi);
 
 ## Send OSC
 
-MicroOsc provides individual fonctions for sending a single argument all supported types. It also provides an advanced function for sending messages with multiples arguments of the same or mixed type.
+MicroOsc provides individual functions for sending a single argument tp all supported types. It also provides an advanced function for sending messages with multiple arguments of the same or mixed types.
 
 #### Sending single argument messages
 
@@ -292,7 +292,7 @@ myOsc.sendInt("/photo", reading);
 ```cpp
 void sendMessage(const char *address, const char *format, ... );
 ``` 
-The format string defines the argument types. Following the format string, you must provide a number of arguments depending on the types:
+The format string defines the argument type of each following argument. You must provide a number of arguments depending on each argument type:
 * "i" : one uint32_t
 * "f" : one 32-bit float
 * "s" : one pointer to a char array
