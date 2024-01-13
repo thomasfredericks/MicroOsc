@@ -310,27 +310,28 @@ myOsc.sendInt("/photo", reading);
 
 #### Advanced sending of lists of arguments
 
-MicroOsc can sends lists of variable arguments, but because we are in **C**, you must **cast** your arguments properly before sending them.
+MicroOsc can sends lists of variable arguments, but because we are in **C**, you must **cast** your arguments (especially `int` as some Arduino boards use `uint16_t` and others `uint32_t`) properly before sending them.
 
+To send a list, use `sendMessage()`:
 ```cpp
 void sendMessage(const char *address, const char *format, ... );
 ``` 
 The format string defines the argument type of each following argument. You must provide a number of arguments depending on each argument type:
-* "i" : one uint32_t
-* "f" : one 32-bit float
-* "s" : one pointer to a char array
-* "b" : one pointer to a uint8_t array **followed by** its length as one uint32_t
-* "m" : one pointer to a uint8_t array of size 4
+* "i" : one `uint32_t`
+* "f" : one 32-bit `float`
+* "s" : one pointer to a **null terminated** char array
+* "b" : one pointer to a `uint8_t` array **followed by** its `uint32_t` length 
+* "m" : one pointer to a `uint8_t` array of size 4
 
 Example that sends a "/stuff" message with a float, string and integer arguments:
 ```cpp
-myOsc.sendMessage("/stuff", "fsi", 1.0 , "hello", 2);
+myOsc.sendMessage("/stuff", "fsi", (float) 1.0 , "hello", (uint32_t) 2);
 ``` 
 
 Example that sends a "/blub" message with a blob argument:
 ```cpp
 uint8_t blob[4] = {1,2,3,4};
 uint32_t length = 4;
-myOsc.sendMessage("/blub", "b", blob, length);
+myOsc.sendMessage("/blub", "b", blob, (uint32_t) length);
 ``` 
 
