@@ -1,12 +1,16 @@
 # MicroOsc
 
 MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for the Arduino frameworks that supports Arduino, Teensy, esp8266 and ESP32 platforms. 
-MicroOsc provides a unified API to work over Serial (Slip) ad over UDP (Ethernet or Wifi). 
+
+MicroOsc provides a unified API to work over Serial (SLIP) and over UDP (Ethernet or Wifi).
+
 It does not hold on to state and error checking is minimal.
-A few Arduino and application (Pure Data, Max, Node JS) examples are included.
+
+Examples are provided for Arduino and a few applications (Pure Data, Max, Node JS).
+
 MicroOsc was inspired by [TinyOSC](https://github.com/mhroth/TinyOSC) by Martin Roth.
 
-## Supported Features
+# Supported Features
 MicroOsc currently supports:
 * Full address and format matching
 * Message parsing
@@ -29,7 +33,7 @@ MicroOsc currently supports:
   * `s`: string
   * `m`: midi
 
-## Unsupported Features
+# Unsupported Features
 
 MicroOsc will eventually but currently does *yet* not support:
 * Send types not *yet* supported:
@@ -51,19 +55,19 @@ MicroOsc will probably never support:
 * timetags
 * Regular expression matching
 
-## Classes
+# Classes
 
 MicroOsc contains 2 classes:
 - `MicroOsc` : the main Class
 - `MicroOscMessage` : a received OSC message
 
-### Overview of all OSC receiving methods of MicroOsc
+## Overview of all OSC receiving methods of MicroOsc
 | MicroOsc  Method | Description |
 | --------------- | --------------- |
 | `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
 
 
-### Overview of all OSC parsing methods of MicroOscMessage
+## Overview of all OSC parsing methods of MicroOscMessage
 | MicroOscMessage Method | Description |
 | --------------- | --------------- |
 | `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
@@ -75,7 +79,7 @@ MicroOsc contains 2 classes:
 | `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob of data and fills a pointer with the address to a byte array |
 | `int nextAsMidi(const uint8_t **midiData)` | Treats the next value as MIDI and fills a pointer with the address to the MIDI data 
 
-### Overview of all sending OSC methods of MicroOsc
+## Overview of all sending OSC methods of MicroOsc
 | MicroOsc  Method | Description |
 | --------------- | --------------- |
 | `void sendInt(const char *address, int32_t i)` | Send a single int OSC message |
@@ -87,11 +91,11 @@ MicroOsc contains 2 classes:
 | `void sendInt64(const char *address, uint64_t h)` | Send a single Int64 OSC message |
 | `void sendMessage(const char *address, const char *format, ...)` | Send an OSC message with any mnumber of arguments of diffrent types |
 
-## Initialization  
+# Initialization  
 
 There are currently 2 supported transport protocols. Serial (with SLIP) and UDP (Ethernet or WiFi). The 2 versions are identical except for their initialization.
 
-### OSC SLIP
+## OSC SLIP
 
 ```cpp
 #include <MicroOscSlip.h>
@@ -105,7 +109,7 @@ In `setup()` don't forget to start Serial:
   Serial.begin(115200);
 ```
 
-### OSC UDP
+## OSC UDP
 
 Initialize UDP and network details first:
 ```cpp
@@ -133,9 +137,9 @@ The destination can be changed during runtime:
 ```cpp
 myOsc.setDestination(IPAddress destinationIp, unsigned int destinationPort) 
 ```
-## Receive OSC
+# Receive OSC
 
-### Defining a function for the reception of OSC messages
+## Defining a function for the reception of OSC messages
 
 To receive OSC messages you must first create a function in which you will check the message address and get the message arguments:
 ```cpp
@@ -144,18 +148,18 @@ void myOscMessageParser( MicroOscMessage& receivedOscMessage) {
    // DO MESSAGE ADDRESS CHECKING AND ARGUMENT GETTING HERE
 }
 ```
-### Triggering the reception of OSC messages
+## Triggering the reception of OSC messages
 
 In `loop()` you need to trigger the reception of the messages:
 ```cpp
 myOsc.onOscMessageReceived( myOscMessageParser );
 ```
 
-### Check address and argument types of a MicroOscMessage
+## Check address and argument types of a MicroOscMessage
 
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message. **The following functions are members of `MicroOscMessage`.**
 
-#### Check for an address
+### Check for an address
 
 ```cpp
 /**
@@ -171,7 +175,7 @@ if ( receivedOscMessage.checkOscAddress("/pot") ) {
 }
 ```
 
-####  Check for an address more precisily
+###  Check for an address more precisily
 ```cpp
 /**
 * Returns true if the address and argument type tags match exactly.
@@ -185,12 +189,12 @@ if ( receivedOscMessage.checkOscAddress("/pot", "i") ) {
   // ...
 }
 ```
-### Get argument values of a MicroOscMessage
+## Get argument values of a MicroOscMessage
 
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message.
 **The following functions are members of `MicroOscMessage`.**
 
-#### Get the next argument in the buffer as a 32-bit **int**
+### Get the next argument in the buffer as a 32-bit **int**
 ```cpp
 /**
 * Returns the next argument as a 32-bit int. 
@@ -204,7 +208,7 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 int32_t intArgument = receivedOscMessage.nextAsInt();
 ```
 
-####  Get the next argument in the buffer as a 32-bit **float**
+###  Get the next argument in the buffer as a 32-bit **float**
 ```cpp
 /**
 * Returns the next argument as a 32-bit float.
@@ -218,7 +222,7 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 float floatArgument = receivedOscMessage.nextAsFloat();
 ```
 
-####  Get the next argument in the buffer as a C **string** pointer
+###  Get the next argument in the buffer as a C **string** pointer
 
 ```cpp
 /**
@@ -233,7 +237,7 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 const char * s = receivedOscMessage.nextAsString();
 ```
 
-#### Get the next argument in the buffer as a **byte array(blob)**
+### Get the next argument in the buffer as a **byte array(blob)**
 ```cpp
 /**
 * Treats the next argument as a blob of data and sets a pointer with the address to a byte array. 
@@ -249,7 +253,7 @@ const uint8_t* blob;
 uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 ```
 
-####  Get the next argument in the buffer as a **MIDI** data array
+###  Get the next argument in the buffer as a **MIDI** data array
 ```cpp
 /**
 * Treats the next value as MIDI and sets a pointer with the address to the MIDI data. 
@@ -265,7 +269,7 @@ const uint8_t* midi;
 receivedOscMessage.nextAsMidi(&midi);
 ```
 
-#### Parse a list of arguments
+### Parse a list of arguments
 
 You can also receive lists of arguments with MicroOsc. Everytime you get the value of an argument, an internal pointer moves to the next argument in the list automatically.
 
@@ -285,11 +289,11 @@ if ( receivedOscMessage.checkOscAddress("/controller", "sfs") ) {
 }
 ```
 
-## Send OSC
+# Send OSC
 
 MicroOsc provides individual functions for sending a single argument tp all supported types. It also provides an advanced function for sending messages with multiple arguments of the same or mixed types.
 
-#### Sending single argument messages
+## Sending single argument messages
 
 ```cpp
 void sendMessage(const char *address, const char *format, ...);
@@ -308,7 +312,7 @@ int reading = analogRead(1);
 myOsc.sendInt("/photo", reading);
 ``` 
 
-#### Advanced sending of lists of arguments
+## Sending of lists of arguments
 
 MicroOsc can sends lists of variable arguments, but because we are in **C**, you must **cast** your arguments (especially `int` as some Arduino boards use `uint16_t` and others `uint32_t`) properly before sending them.
 
