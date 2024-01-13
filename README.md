@@ -265,6 +265,26 @@ const uint8_t* midi;
 receivedOscMessage.nextAsMidi(&midi);
 ```
 
+#### Parse a list of arguments
+
+You can also receive lists of arguments with MicroOsc. Everytime you get the value of an argument, an internal pointer moves to the next argument in the list automatically.
+
+For example if you to receive and parse the OSC message `/controller ["FREQ",  0.125, "kHz"]` you can do the following:
+```
+//  OSC MSG "/controller" WITH THE ARGUMENT LIST "sfs" (string, float, string)
+if ( receivedOscMessage.checkOscAddress("/controller", "sfs") ) {
+
+  // GET THE FIRST AS A STRING
+  const char * firstAsString = receivedOscMessage.nextAsString();
+
+ // GET THE SECOND AS A FLOAT
+  float secondAsFloat  = receivedOscMessage.nextAsFloat();
+
+  // GET THE THIRD AS A STRING
+  const char * thirdAsAString = receivedOscMessage.nextAsString();
+}
+```
+
 ## Send OSC
 
 MicroOsc provides individual functions for sending a single argument tp all supported types. It also provides an advanced function for sending messages with multiple arguments of the same or mixed types.
@@ -288,7 +308,10 @@ int reading = analogRead(1);
 myOsc.sendInt("/photo", reading);
 ``` 
 
-#### Advanced sending
+#### Advanced sending of lists of arguments
+
+MicroOsc can sends lists of variable arguments, but because we are in **C**, you must **cast** your arguments properly before sending them.
+
 ```cpp
 void sendMessage(const char *address, const char *format, ... );
 ``` 
