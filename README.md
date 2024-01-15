@@ -82,8 +82,8 @@ MicroOsc contains 2 classes:
 ### Advanced MicroOscMessage methods
 | Advanced MicroOscMessage Method | Description |
 | --------------- | --------------- |
-| `size_t copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength. Returns the number of characters copied |
-| `size_t copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the type tags into a `char*` destinationBuffer of maximum length destinationBufferMaxLength. Returns the number of characters copied |
+| `void copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength |
+| `void copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the type tags into a `char*` destinationBuffer of maximum length destinationBufferMaxLength |
 
 
 ## Overview of all sending OSC methods of MicroOsc
