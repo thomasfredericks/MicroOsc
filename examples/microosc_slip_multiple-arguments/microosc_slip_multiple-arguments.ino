@@ -46,8 +46,8 @@ void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
   if (oscMessage.checkOscAddress("/echo", "sfi")) {
 
     char stringArgument[20];
-    char* stringPointer = oscMessage.nextAsString();
-    size_t copiedChars = snprintf(stringArgument, 20, "%s", stringPointer);
+    const char* stringPointer = oscMessage.nextAsString();
+    snprintf(stringArgument, 20, "%s", stringPointer);
 
     float floatArgument = oscMessage.nextAsFloat();
 
@@ -60,8 +60,8 @@ void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
     float floatArgument = oscMessage.nextAsFloat();
 
     char stringArgument[20];
-    char* stringPointer = oscMessage.nextAsString();
-    size_t copiedChars = snprintf(stringArgument, 20, "%s", stringPointer);
+    const char* stringPointer = oscMessage.nextAsString();
+    snprintf(stringArgument, 20, "%s", stringPointer);
 
     int intArgument = oscMessage.nextAsInt();
 
@@ -85,7 +85,7 @@ void loop() {
     float f_millis = float(millis()) / 1000.0;
 
     char s_millis[20];
-    size_t writtenChars = snprintf(s_millis, 20, "milliseconds:%ld", millis());
+    snprintf(s_millis, 20, "milliseconds:%ld", millis());
 
     // void sendMessage(const char *address, const char *format, ... );
     myMicroOsc.sendMessage("/stuff", "fsi", f_millis, s_millis, millis());

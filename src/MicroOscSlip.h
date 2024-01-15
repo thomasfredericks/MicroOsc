@@ -149,7 +149,7 @@ class MicroOscSlip : public MicroOsc {
 	}
 
   public:
-    MicroOscSlip(Stream * stream) : slip(stream), MicroOsc(&slip) {
+    MicroOscSlip(Stream * stream) : MicroOsc(&slip), slip(stream) {
 
     }
 
