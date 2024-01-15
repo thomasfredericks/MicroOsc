@@ -283,7 +283,7 @@ bool MicroOsc::isABundle(const unsigned char  *buffer) {
 void MicroOsc::parseBundle(unsigned char  *buffer, const size_t bufferLength) {
   bundle.buffer =  buffer;
   bundle.marker = buffer + 16; // move past '#bundle ' and timetag fields
-  bundle.bufLen = bufferLength;
+  //bundle.bufLen = bufferLength;
   bundle.bundleLen = bufferLength;
 }
 
@@ -292,7 +292,7 @@ void MicroOsc::parseBundle(unsigned char  *buffer, const size_t bufferLength) {
 
 
 bool MicroOsc::getNextMessage() {
-  if ((bundle.marker - bundle.buffer) >= bundle.bundleLen) return false;
+  if ((int32_t)(bundle.marker - bundle.buffer) >= bundle.bundleLen) return false;
 
   uint32_t lenBE = *((uint32_t *) bundle.marker);
   uint32_t bufferLength = uOsc_bigEndian(lenBE);
@@ -386,9 +386,15 @@ int32_t MicroOscMessage::nextAsInt() {
 float MicroOscMessage::nextAsFloat() {
   // convert from big-endian (network btye order)
   const uint32_t iBE = *((uint32_t *) marker);
-  const uint32_t i  = uOsc_bigEndian(iBE);
   marker += 4;
+/*
+  const uint32_t i  = uOsc_bigEndian(iBE);
   return *((float *) (&i)); // HARD CAST TO FLOAT
+  */
+  union IntFloatUnion u;
+  u.intValue = uOsc_bigEndian(iBE);
+
+  return u.floatValue;
 }
 
 
@@ -401,12 +407,21 @@ const char* MicroOscMessage::nextAsString() {
   return s;
 }
 
+void MicroOscMessage::copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength) {
+  strncpy(destinationBuffer, (const char *) buffer, destinationBufferMaxLength);
+}
+
+void MicroOscMessage::copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength) {
+  strncpy(destinationBuffer, (const char *) format, destinationBufferMaxLength);
+}
+
+
 
 bool MicroOscMessage::checkOscAddress(const char* address) {
   return (strcmp( (const char *) buffer, address) == 0);
 }
 
-bool MicroOscMessage::checkOscAddress(const char* address, const char * typetags) {
+bool MicroOscMessage::checkOscAddressAndTypeTags(const char* address, const char * typetags) {
   return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
 }
 

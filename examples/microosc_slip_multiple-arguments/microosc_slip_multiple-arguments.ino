@@ -43,7 +43,7 @@ void setup() {
 void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
 
   // CHECK THE ADDRESS OF THE OSC MESSAGE
-  if (oscMessage.checkOscAddress("/echo", "sfi")) {
+  if (oscMessage.checkOscAddressAndTypeTags("/echo", "sfi")) {
 
     char stringArgument[20];
     const char* stringPointer = oscMessage.nextAsString();
@@ -55,7 +55,7 @@ void myOnOscMessageReceived(MicroOscMessage& oscMessage) {
 
     myMicroOsc.sendMessage("/echo", "sfi", stringArgument, floatArgument, intArgument);
 
-  } else if (oscMessage.checkOscAddress("/echo", "fsi")) {
+  } else if (oscMessage.checkOscAddressAndTypeTags("/echo", "fsi")) {
 
     float floatArgument = oscMessage.nextAsFloat();
 

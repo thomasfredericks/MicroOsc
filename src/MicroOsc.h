@@ -21,7 +21,11 @@
 
 
 class MicroOscMessage {
-
+ 
+ union IntFloatUnion {
+    uint32_t intValue;
+    float floatValue;
+};
 
 public:
 
@@ -42,7 +46,25 @@ public:
 	/**
 	* Returns `true` if the address and argument type tags match exactly.
 	*/
+	[[deprecated("Use checkOscAddressAndType(address) instead.")]]
 	bool checkOscAddress(const char* address, const char * typetags);
+    
+    /**
+	* Returns `true` if the address and argument type tags match exactly.
+	*/
+	bool checkOscAddressAndTypeTags(const char* address, const char * typetags);
+    
+    /**
+	* Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength.
+	*/
+	void copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength);
+    
+    
+    /**
+	* Copies the type tags into a `char*` destinationBuffer of maximum length destinationBufferMaxLength.
+	*/
+	void copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength);
+
 
 	/**
 	* Returns `true` if the address matches exactly
@@ -111,8 +133,8 @@ private:
 	struct uOscBundle {
 		unsigned char* marker; // the current write head (where the next message will be written)
 		unsigned char* buffer; // the original buffer
-		size_t bufLen; // the byte length of the original buffer
-		size_t bundleLen; // the byte length of the total bundle
+		//size_t bufLen; // the byte length of the original buffer
+		int32_t bundleLen; // the byte length of the total bundle
 	} ;
 
 	//unsigned char *buffer;

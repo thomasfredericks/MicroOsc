@@ -72,12 +72,19 @@ MicroOsc contains 2 classes:
 | --------------- | --------------- |
 | `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
 | `bool checkOscAddress(const char* address)` | Returns `true` if the address matches exactly |
-| `bool checkOscAddress(const char* address,const char * typetags)` | Returns `true` if the address and argument type tags match exactly |
+| `bool checkOscAddressAndTypeTags(const char* address,const char * typetags)` | Returns `true` if the address and argument type tags match exactly |
 | `int32_t nextAsInt()` | Returns the next argument as a 32-bit int |
 | `float nextAsFloat()` | Returns the next argument as a 32-bit float |
 | `const char* nextAsString()` | Treats the next argument as a C string and returns a pointer to the data |
 | `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob of data and fills a pointer with the address to a byte array |
-| `int nextAsMidi(const uint8_t **midiData)` | Treats the next value as MIDI and fills a pointer with the address to the MIDI data 
+| `int nextAsMidi(const uint8_t **midiData)` | Treats the next value as MIDI and fills a pointer with the address to the MIDI data |
+
+### Advanced MicroOscMessage methods
+| Advanced MicroOscMessage Method | Description |
+| --------------- | --------------- |
+| `size_t copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength. Returns the number of characters copied |
+| `size_t copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the type tags into a `char*` destinationBuffer of maximum length destinationBufferMaxLength. Returns the number of characters copied |
+
 
 ## Overview of all sending OSC methods of MicroOsc
 | MicroOsc  Method | Description |
@@ -180,12 +187,12 @@ if ( receivedOscMessage.checkOscAddress("/pot") ) {
 /**
 * Returns true if the address and argument type tags match exactly.
 */
-bool checkOscAddress(const char* address, const char * typetags);
+bool checkOscAddressAndTypeTags(const char* address, const char * typetags);
 ```
 
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
-if ( receivedOscMessage.checkOscAddress("/pot", "i") ) {
+if ( checkOscAddressAndTypeTags.checkOscAddress("/pot", "i") ) {
   // ...
 }
 ```
