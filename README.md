@@ -201,7 +201,7 @@ if ( receivedOscMessage.checkOscAddressAndTypeTags("/pot", "i") ) {
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message.
 **The following functions are members of `MicroOscMessage`.**
 
-### Get the next argument in the buffer as a 32-bit **int**
+### Get next as a 32-bit **int**
 ```cpp
 /**
 * Returns the next argument as a 32-bit int. 
