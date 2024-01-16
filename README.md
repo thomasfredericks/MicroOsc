@@ -166,7 +166,7 @@ myOsc.onOscMessageReceived( myOscMessageParser );
 
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message. **The following functions are members of `MicroOscMessage`.**
 
-### Check for an address
+### Check address
 
 ```cpp
 /**
@@ -182,7 +182,7 @@ if ( receivedOscMessage.checkOscAddress("/pot") ) {
 }
 ```
 
-###  Check for an address and type tages
+###  Check address and type tags
 ```cpp
 /**
 * Returns true if the address and argument type tags match exactly.
@@ -196,7 +196,7 @@ if ( receivedOscMessage.checkOscAddressAndTypeTags("/pot", "i") ) {
   // ...
 }
 ```
-## Get argument values of a MicroOscMessage
+## Get arguments of a MicroOscMessage
 
 MicroOsc will return a reference to a `MicroOscMessage` when it receives an OSC message.
 **The following functions are members of `MicroOscMessage`.**
@@ -215,7 +215,7 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 int32_t intArgument = receivedOscMessage.nextAsInt();
 ```
 
-###  Get the next argument in the buffer as a 32-bit **float**
+###  Get next as a 32-bit **float**
 ```cpp
 /**
 * Returns the next argument as a 32-bit float.
@@ -229,7 +229,7 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 float floatArgument = receivedOscMessage.nextAsFloat();
 ```
 
-###  Get the next argument in the buffer as a C **string** pointer
+###  Get next argument as a C **string** pointer
 
 **WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
 
@@ -246,7 +246,7 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 const char * s = receivedOscMessage.nextAsString();
 ```
 
-### Get the next argument in the buffer as a **byte array(blob)** 
+### Get next as a **byte array(blob)** 
 
 **WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
 
@@ -265,7 +265,7 @@ const uint8_t* blob;
 uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 ```
 
-###  Get the next argument in the buffer as a **MIDI** data array
+###  Get next as a **MIDI** data array
 
 **WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
 
@@ -308,7 +308,7 @@ if ( receivedOscMessage.checkOscAddress("/controller", "sfs") ) {
 
 MicroOsc provides individual functions for sending a single argument tp all supported types. It also provides an advanced function for sending messages with multiple arguments of the same or mixed types.
 
-## Sending single argument messages
+## Sending a single argument
 
 ```cpp
 void sendMessage(const char *address, const char *format, ...);
@@ -327,7 +327,7 @@ int reading = analogRead(1);
 myOsc.sendInt("/photo", reading);
 ``` 
 
-## Sending of lists of arguments
+## Sending a list of arguments
 
 MicroOsc can sends lists of variable arguments, but because we are in **C**, you must **cast** your arguments (especially `int` as some Arduino boards use `uint16_t` and others `uint32_t`) properly before sending them.
 
