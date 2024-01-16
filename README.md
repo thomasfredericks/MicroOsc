@@ -289,7 +289,7 @@ receivedOscMessage.nextAsMidi(&midi);
 You can also receive lists of arguments with MicroOsc. Everytime you get the value of an argument, an internal pointer moves to the next argument in the list automatically.
 
 For example if you to receive and parse the OSC message `/controller ["FREQ",  0.125, "kHz"]` you can do the following:
-```
+```cpp
 //  OSC MSG "/controller" WITH THE ARGUMENT LIST "sfs" (string, float, string)
 if ( receivedOscMessage.checkOscAddress("/controller", "sfs") ) {
 
