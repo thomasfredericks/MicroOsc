@@ -336,21 +336,21 @@ To send a list, use `sendMessage()`:
 void sendMessage(const char *address, const char *format, ... );
 ``` 
 The format string defines the argument type of each following argument. You must provide a number of arguments depending on each argument type:
-* "i" : one `uint32_t`
+* "i" : one `int32_t`
 * "f" : one 32-bit `float`
 * "s" : one pointer to a **null terminated** char array
-* "b" : one pointer to a `uint8_t` array **followed by** its `uint32_t` length 
+* "b" : one pointer to a `uint8_t` array **followed by** its `int32_t` length 
 * "m" : one pointer to a `uint8_t` array of size 4
 
 Example that sends a "/stuff" message with a float, string and integer arguments:
 ```cpp
-myOsc.sendMessage("/stuff", "fsi", (float) 1.0 , "hello", (uint32_t) 2);
+myOsc.sendMessage("/stuff", "fsi", (float) 1.0 , "hello", (int32_t) 2);
 ``` 
 
 Example that sends a "/blub" message with a blob argument:
 ```cpp
 uint8_t blob[4] = {1,2,3,4};
 uint32_t length = 4;
-myOsc.sendMessage("/blub", "b", blob, (uint32_t) length);
+myOsc.sendMessage("/blub", "b", blob, (int32_t) length);
 ``` 
 
