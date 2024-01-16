@@ -182,7 +182,7 @@ if ( receivedOscMessage.checkOscAddress("/pot") ) {
 }
 ```
 
-###  Check for an address more precisily
+###  Check for an address and type tages
 ```cpp
 /**
 * Returns true if the address and argument type tags match exactly.
@@ -192,7 +192,7 @@ bool checkOscAddressAndTypeTags(const char* address, const char * typetags);
 
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
-if ( checkOscAddressAndTypeTags.checkOscAddress("/pot", "i") ) {
+if ( receivedOscMessage.checkOscAddressAndTypeTags("/pot", "i") ) {
   // ...
 }
 ```
@@ -231,6 +231,8 @@ float floatArgument = receivedOscMessage.nextAsFloat();
 
 ###  Get the next argument in the buffer as a C **string** pointer
 
+**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
+
 ```cpp
 /**
 * Treats the next argument as a string and returns a pointer to the data as a C string, 
@@ -244,7 +246,10 @@ Example with a `MicroOscMessage` named `receivedOscMessage`:
 const char * s = receivedOscMessage.nextAsString();
 ```
 
-### Get the next argument in the buffer as a **byte array(blob)**
+### Get the next argument in the buffer as a **byte array(blob)** 
+
+**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
+
 ```cpp
 /**
 * Treats the next argument as a blob of data and sets a pointer with the address to a byte array. 
@@ -261,6 +266,9 @@ uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 ```
 
 ###  Get the next argument in the buffer as a **MIDI** data array
+
+**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
+
 ```cpp
 /**
 * Treats the next value as MIDI and sets a pointer with the address to the MIDI data. 
