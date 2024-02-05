@@ -2,6 +2,8 @@
  * By Thomas O Fredericks (tof@tofstuff.com) 
  */
 
+//#define MICRO_OSC_DEBUG 
+
 #ifndef _MICRO_OSC_UDP_
 #define _MICRO_OSC_UDP_
 
@@ -14,7 +16,7 @@ class MicroOscUdp : public MicroOsc {
 
     UDP* udp;
     unsigned char inputBuffer[MICRO_OSC_IN_SIZE];
-    IPAddress destinationIp;
+    IPAddress destinationIp = INADDR_NONE;
     unsigned int destinationPort;
 
     protected:
@@ -34,13 +36,21 @@ class MicroOscUdp : public MicroOsc {
 		 udp->endPacket(); 
 	}
 
+  bool readyToSendMessage() {
+    return destinationIp != INADDR_NONE;
+  }
+
   public:
     MicroOscUdp(UDP * udp, IPAddress destinationIp, unsigned int destinationPort) : MicroOsc(udp) {
     	this->udp = udp;
-		this->destinationIp = destinationIp;
-		this->destinationPort = destinationPort;
+		  this->destinationIp = destinationIp;
+		  this->destinationPort = destinationPort;
     }
-
+     
+     MicroOscUdp(UDP * udp) : MicroOsc(udp) {
+      this->udp = udp;
+      this->destinationIp = INADDR_NONE;
+    }
 
 
     virtual void onOscMessageReceived(tOscCallbackFunction callback) {

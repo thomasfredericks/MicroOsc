@@ -147,6 +147,9 @@ class MicroOscSlip : public MicroOsc {
 	void endMessage() {
 		slip.endPacket(); 
 	}
+	bool readyToSendMessage() {
+		return true;
+	}
 
   public:
     MicroOscSlip(Stream * stream) : MicroOsc(&slip), slip(stream) {

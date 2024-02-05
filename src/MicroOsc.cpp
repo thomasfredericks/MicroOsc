@@ -303,69 +303,85 @@ bool MicroOsc::getNextMessage() {
 }
 
 void MicroOsc::sendMessage(const char *address, const char *format, ...) {
-  beginMessage();
-  va_list ap;
-  va_start(ap, format);
-  writeMessage( address, format, ap);
-  va_end(ap);
-  endMessage();
+  if ( readyToSendMessage() ) {
+      beginMessage();
+      va_list ap;
+      va_start(ap, format);
+      writeMessage( address, format, ap);
+      va_end(ap);
+      endMessage();
+  }
 }
 
 
 void MicroOsc::sendInt(const char *address, int32_t i) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("i");
-  writeInt(i);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+     writeAddress(address);
+    writeFormat("i");
+    writeInt(i);
+    endMessage();
+  }
 }
 
 void MicroOsc::sendFloat(const char *address, float f) {
+   if ( readyToSendMessage() ) {
   beginMessage();
   writeAddress(address);
   writeFormat("f");
   writeFloat(f);
   endMessage();
+  }
 }
 
 void MicroOsc::sendString(const char *address, const char *str) {
+   if ( readyToSendMessage() ) {
   beginMessage();
   writeAddress(address);
   writeFormat("s");
   writeString(str);
   endMessage();
+  }
 }
 
 void MicroOsc::sendBlob(const char *address, unsigned char *b, int32_t length) {
+   if ( readyToSendMessage() ) {
   beginMessage();
   writeAddress(address);
   writeFormat("b");
   writeBlob(b, length);
   endMessage();
+  }
 }
 
 void MicroOsc::sendDouble(const char *address, double d) {
+   if ( readyToSendMessage() ) {
   beginMessage();
   writeAddress(address);
   writeFormat("d");
   writeDouble(d);
   endMessage();
+  }
 }
 
 void MicroOsc::sendMidi(const char *address, unsigned char *midi) {
+   if ( readyToSendMessage() ) {
   beginMessage();
   writeAddress(address);
   writeFormat("m");
   writeMidi(midi);
   endMessage();
+  }
 }
 
 void MicroOsc::sendInt64(const char *address, uint64_t h) {
+   if ( readyToSendMessage() ) {
   beginMessage();
   writeAddress(address);
   writeFormat("h");
   writeInt64(h);
   endMessage();
+  }
 }
 
 
@@ -421,19 +437,21 @@ bool MicroOscMessage::checkOscAddress(const char* address) {
   return (strcmp( (const char *) buffer, address) == 0);
 }
 
+
 bool MicroOscMessage::checkOscAddressAndTypeTags(const char* address, const char * typetags) {
   return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
 }
 
-
+/*
 bool MicroOscMessage::fullMatch(const char* address) {
   return checkOscAddress(address);
 }
-
+*/
+/*
 bool MicroOscMessage::fullMatch(const char* address, const char * typetags) {
   return checkOscAddress(address, typetags);
 }
-
+*/
 uint32_t MicroOscMessage::nextAsBlob( const unsigned char  **blob) {
 
   const uint32_t iBE = *((uint32_t *) marker);

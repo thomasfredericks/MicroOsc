@@ -43,16 +43,20 @@ public:
 	*/
 	bool checkOscAddress(const char* address);
 
-	/**
-	* Returns `true` if the address and argument type tags match exactly.
-	*/
-	[[deprecated("Use checkOscAddressAndType(address) instead.")]]
-	bool checkOscAddress(const char* address, const char * typetags);
-    
+
     /**
 	* Returns `true` if the address and argument type tags match exactly.
 	*/
 	bool checkOscAddressAndTypeTags(const char* address, const char * typetags);
+
+		/**
+	* Returns `true` if the address and argument type tags match exactly.
+	*/
+	[[deprecated("Use checkOscAddressAndType(address) instead.")]]
+	bool checkOscAddress(const char* address, const char * typetags) {
+		return checkOscAddressAndTypeTags(address,typetags);
+	};
+    
     
     /**
 	* Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength.
@@ -70,13 +74,17 @@ public:
 	* Returns `true` if the address matches exactly
 	*/
 	[[deprecated("Use checkOscAddress(address) instead.")]]
-	bool fullMatch(const char* address);
+	bool fullMatch(const char* address) {
+			return checkOscAddress(address);
+	};
 
 	/**
 	* Returns true if the address and argument type tags match exactly.
 	*/
-	[[deprecated("Use checkOscAddress(address,typetags) instead.")]]
-	bool fullMatch(const char* address, const char * typetags);
+	[[deprecated("Use checkOscAddressAndTypeTags(address,typetags) instead.")]]
+	bool fullMatch(const char* address, const char * typetags) {
+		return checkOscAddressAndTypeTags(address,typetags);
+	};
 
 
 	/**
@@ -213,6 +221,7 @@ private:
 protected:
 	virtual void beginMessage() = 0;
 	virtual void endMessage() = 0;
+	virtual bool readyToSendMessage() = 0;
 
 
 public:
