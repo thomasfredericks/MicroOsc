@@ -235,6 +235,10 @@ public:
 	 */
 	void sendMessage(const char *address, const char *format, ...);
 	/**
+	* Send an impulse (aka "bang") message.
+	*/
+	void sendImpulse(const char *address);
+	/**
 	* Send a single int OSC message
 	*/
 	void sendInt(const char *address, int32_t i);

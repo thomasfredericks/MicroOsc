@@ -313,6 +313,15 @@ void MicroOsc::sendMessage(const char *address, const char *format, ...) {
   }
 }
 
+void MicroOsc::sendImpulse(const char *address) {
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("I");
+    endMessage();
+  }
+}
+
 
 void MicroOsc::sendInt(const char *address, int32_t i) {
   if ( readyToSendMessage() ) {
