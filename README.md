@@ -24,6 +24,7 @@ MicroOsc currently supports:
   * `h`: int64
   * `s`: string
   * `m`: midi
+  * `I` : impulse (message with no arguments specified in OSC 1.1)
 
 * Receive Types
   * `b`: blob (byte array)
@@ -40,14 +41,13 @@ MicroOsc will eventually but currently does *yet* not support:
   * `t`: timetag
   * `T`: true
   * `F`: false
-  * `I`: infinitum
   * `N`: nil
 * Receive Types not *yet* supported:
   * `h`: int64
   * `t`: timetag
   * `T`: true
   * `F`: false
-  * `I`: infinitum
+  * `I`: impulse
   * `N`: nil
   
 MicroOsc will probably never support:
@@ -96,6 +96,7 @@ MicroOsc contains 2 classes:
 | `void sendDouble(const char *address,double d)` | Send a single double OSC message |
 | `void sendMidi(const char *address,unsigned char *midi)` |  Send a single MIDI OSC message |
 | `void sendInt64(const char *address, uint64_t h)` | Send a single Int64 OSC message |
+| `void sendImpluse(const char *address)` | Send a message with no arguments |
 | `void sendMessage(const char *address, const char *format, ...)` | Send an OSC message with any mnumber of arguments of diffrent types |
 
 # Initialization  
