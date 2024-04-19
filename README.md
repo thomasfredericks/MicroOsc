@@ -24,7 +24,10 @@ MicroOsc currently supports:
   * `h`: int64
   * `s`: string
   * `m`: midi
-  * `I` : impulse (message with no arguments specified in OSC 1.1)
+  * `I`: impulse (message with no arguments; OSC v1.1)
+  * `T`: TRUE (message with no arguments)
+  * `F`: FALSE (message with no arguments)
+  * `N`: NULL (message with no arguments)
 
 * Receive Types
   * `b`: blob (byte array)
@@ -39,9 +42,7 @@ MicroOsc currently supports:
 MicroOsc will eventually but currently does *yet* not support:
 * Send types not *yet* supported:
   * `t`: timetag
-  * `T`: true
-  * `F`: false
-  * `N`: nil
+
 * Receive Types not *yet* supported:
   * `h`: int64
   * `t`: timetag

@@ -192,11 +192,15 @@ void MicroOsc::writeMessage( const char *address, const char *format, va_list ap
       writeInt64(h);
       break;
     }
-    case 't': // osc timetag
     case 'T': // true
     case 'F': // false
     case 'N': // nil
-    case 'I': // infinitum
+    case 'I': {  // Impulse
+      // No argument
+      break;
+    }
+
+    case 't': // osc timetag
     default:
       // unsupported type, force an error (length will not be a multiple of 4)
       output->write(nullChar);
@@ -304,29 +308,45 @@ bool MicroOsc::getNextMessage() {
 
 void MicroOsc::sendMessage(const char *address, const char *format, ...) {
   if ( readyToSendMessage() ) {
-      beginMessage();
-      va_list ap;
-      va_start(ap, format);
-      writeMessage( address, format, ap);
-      va_end(ap);
-      endMessage();
+    beginMessage();
+    va_list ap;
+    va_start(ap, format);
+    writeMessage( address, format, ap);
+    va_end(ap);
+    endMessage();
+  }
+}
+
+void MicroOsc::sendWithoutArguments(const char *address, const char * type) {
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat(type);
+    endMessage();
   }
 }
 
 void MicroOsc::sendImpulse(const char *address) {
-  if ( readyToSendMessage() ) {
-    beginMessage();
-    writeAddress(address);
-    writeFormat("I");
-    endMessage();
-  }
+  sendWithoutArguments(address,"I");
+}
+
+void MicroOsc::sendTrue(const char *address) {
+  sendWithoutArguments(address,"T");
+}
+
+void MicroOsc::sendFalse(const char *address) {
+  sendWithoutArguments(address,"F");
+}
+
+void MicroOsc::sendNull(const char *address) {
+  sendWithoutArguments(address,"N");
 }
 
 
 void MicroOsc::sendInt(const char *address, int32_t i) {
   if ( readyToSendMessage() ) {
     beginMessage();
-     writeAddress(address);
+    writeAddress(address);
     writeFormat("i");
     writeInt(i);
     endMessage();
@@ -334,62 +354,62 @@ void MicroOsc::sendInt(const char *address, int32_t i) {
 }
 
 void MicroOsc::sendFloat(const char *address, float f) {
-   if ( readyToSendMessage() ) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("f");
-  writeFloat(f);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("f");
+    writeFloat(f);
+    endMessage();
   }
 }
 
 void MicroOsc::sendString(const char *address, const char *str) {
-   if ( readyToSendMessage() ) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("s");
-  writeString(str);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("s");
+    writeString(str);
+    endMessage();
   }
 }
 
 void MicroOsc::sendBlob(const char *address, unsigned char *b, int32_t length) {
-   if ( readyToSendMessage() ) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("b");
-  writeBlob(b, length);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("b");
+    writeBlob(b, length);
+    endMessage();
   }
 }
 
 void MicroOsc::sendDouble(const char *address, double d) {
-   if ( readyToSendMessage() ) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("d");
-  writeDouble(d);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("d");
+    writeDouble(d);
+    endMessage();
   }
 }
 
 void MicroOsc::sendMidi(const char *address, unsigned char *midi) {
-   if ( readyToSendMessage() ) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("m");
-  writeMidi(midi);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("m");
+    writeMidi(midi);
+    endMessage();
   }
 }
 
 void MicroOsc::sendInt64(const char *address, uint64_t h) {
-   if ( readyToSendMessage() ) {
-  beginMessage();
-  writeAddress(address);
-  writeFormat("h");
-  writeInt64(h);
-  endMessage();
+  if ( readyToSendMessage() ) {
+    beginMessage();
+    writeAddress(address);
+    writeFormat("h");
+    writeInt64(h);
+    endMessage();
   }
 }
 
@@ -412,10 +432,10 @@ float MicroOscMessage::nextAsFloat() {
   // convert from big-endian (network btye order)
   const uint32_t iBE = *((uint32_t *) marker);
   marker += 4;
-/*
-  const uint32_t i  = uOsc_bigEndian(iBE);
-  return *((float *) (&i)); // HARD CAST TO FLOAT
-  */
+  /*
+    const uint32_t i  = uOsc_bigEndian(iBE);
+    return *((float *) (&i)); // HARD CAST TO FLOAT
+    */
   union IntFloatUnion u;
   u.intValue = uOsc_bigEndian(iBE);
 

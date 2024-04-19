@@ -223,6 +223,8 @@ protected:
 	virtual void endMessage() = 0;
 	virtual bool readyToSendMessage() = 0;
 
+private:
+	void sendWithoutArguments(const char *address, const char * type);
 
 public:
 	/**
@@ -235,9 +237,21 @@ public:
 	 */
 	void sendMessage(const char *address, const char *format, ...);
 	/**
-	* Send an impulse (aka "bang") message.
+	* Send an impulse (aka "bang") message without any arguments.
 	*/
 	void sendImpulse(const char *address);
+	/**
+	* Send a TRUE message without any arguments.
+	*/
+	void sendTrue(const char *address);
+		/**
+	* Send an FALSE message without any arguments.
+	*/
+	void sendFalse(const char *address);
+		/**
+	* Send a message without any arguments.
+	*/
+	void sendNull(const char *address);
 	/**
 	* Send a single int OSC message
 	*/
