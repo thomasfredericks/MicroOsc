@@ -14,7 +14,7 @@ let button;
 // OSC WEBSOCKET
 let webSocketConnected = false;
 
-let socketPort = 8000; 
+let socketPort = 8080; 
 oscSocket = new osc.WebSocketPort({
 				url: "ws://localhost:"+socketPort,
 				metadata: true
