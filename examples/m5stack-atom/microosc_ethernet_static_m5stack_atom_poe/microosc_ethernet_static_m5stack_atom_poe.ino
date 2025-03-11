@@ -35,6 +35,7 @@
 CRGB mesPixels[1];
 
 #include <SPI.h>
+#include <esp_mac.h>
 #include <Ethernet.h>
 // An EthernetUDP instance to let us send and receive packets over UDP
 EthernetUDP myUdp;
