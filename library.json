@@ -1,0 +1,26 @@
+{
+  "name": "MicroOsc",
+  "version": "0.1.8",
+  "description": "Simple and lightweight Open Sound Control (OSC) library",
+  "keywords": "Communication",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/thomasfredericks/MicroOsc.git"
+  },
+  "authors":
+  [
+    {
+      "name": "Thomas Fredericks",
+      "url": "https://github.com/thomasfredericks",
+      "maintainer": true
+    }
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/thomasfredericks/MicroOsc",
+  "dependencies": {
+    "external-repo": "https://github.com/thomasfredericks/MicroSlip.git"
+  },
+  "frameworks": "*",
+  "platforms": "*"
+}

@@ -52,6 +52,17 @@ class MicroOscUdp : public MicroOsc {
       this->destinationIp = INADDR_NONE;
     }
 
+     MicroOscUdp(UDP & udp, IPAddress destinationIp, unsigned int destinationPort) : MicroOsc(udp) {
+    	this->udp = &udp;
+		  this->destinationIp = destinationIp;
+		  this->destinationPort = destinationPort;
+    }
+     
+     MicroOscUdp(UDP & udp) : MicroOsc(udp) {
+      this->udp = &udp;
+      this->destinationIp = INADDR_NONE;
+    }
+
 
     virtual void onOscMessageReceived(tOscCallbackFunction callback) {
       size_t packetLength = udp->parsePacket();
