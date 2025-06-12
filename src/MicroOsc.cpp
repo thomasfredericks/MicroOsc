@@ -236,6 +236,8 @@ int MicroOsc::parseMessage(unsigned char  *buffer, const size_t bufferLength) {
   message.buffer = buffer;
   message.bufferLength = bufferLength;
 
+  message.source = this;
+
   return 0;
 }
 
