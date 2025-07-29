@@ -18,9 +18,13 @@
   ],
   "license": "MIT",
   "homepage": "https://github.com/thomasfredericks/MicroOsc",
-  "dependencies": {
-    "external-repo": "https://github.com/thomasfredericks/MicroSlip.git"
-  },
+  "dependencies": [
+  {
+    "name": "MicroSlip",
+    "url": "https://github.com/thomasfredericks/MicroSlip.git"
+  }
+]
+,
   "frameworks": "*",
   "platforms": "*"
 }
