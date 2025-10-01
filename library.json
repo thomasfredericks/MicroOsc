@@ -1,6 +1,6 @@
 {
   "name": "MicroOsc",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Simple and lightweight Open Sound Control (OSC) library",
   "keywords": "Communication",
   "repository":
