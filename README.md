@@ -120,10 +120,22 @@ In `setup()` don't forget to start Serial:
 
 ## OSC UDP
 
-Initialize UDP and network details first:
+Initialize UDP and network details first.
+
+For WiFi:
 ```cpp
 #include <WiFiUdp.h>
 WiFiUDP myUdp;
+unsigned int myReceivePort = 8888;
+IPAddress mySendIp(192, 168, 1, 210);
+unsigned int mySendPort = 7777;
+```
+
+For Ethernet:
+```cpp
+#include <Ethernet.h>
+// An EthernetUDP instance to let us send and receive packets over UDP
+EthernetUDP myUdp;
 unsigned int myReceivePort = 8888;
 IPAddress mySendIp(192, 168, 1, 210);
 unsigned int mySendPort = 7777;
@@ -144,8 +156,12 @@ In `setup()` don't forget to start your UDP instance:
 
 The destination can be changed during runtime:
 ```cpp
-myOsc.setDestination(IPAddress destinationIp, unsigned int destinationPort) 
+myOsc.setDestination( destinationIp, destinationPort) 
 ```
+- `destinationIp` : IP adresse (`IPAddress`) of the device you want to send messages to.
+- `destinationPort` : port number (`unsigned int`) of the device you want to send messages to.
+
+
 # Receive OSC
 
 ## Defining a function for the reception of OSC messages
