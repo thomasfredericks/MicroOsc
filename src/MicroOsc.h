@@ -16,22 +16,11 @@
 #include "Print.h"
 #include "MicroOscMessage.h"
 
-
-//#define MICRO_OSC_DEBUG
-
-
-
-
-
 class MicroOsc
 {
 
 public:
 	typedef void (*tOscCallbackFunction)(MicroOscMessage&);
-
-
-
-
 
 private:
 	struct uOscBundle {
