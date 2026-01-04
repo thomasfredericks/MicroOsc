@@ -39,6 +39,11 @@ public:
 	bool checkOscAddressAndTypeTags(const char *address, const char *typetags);
 
 	/**
+	 * Returns `true` if the source matches.
+	 */
+	bool checkSource(const MicroOsc& source);
+
+	/**
 	 * Returns `true` if the address and argument type tags match exactly.
 	 */
 	[[deprecated("Use checkOscAddressAndType(address) instead.")]]
