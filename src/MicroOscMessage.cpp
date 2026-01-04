@@ -58,6 +58,10 @@ bool MicroOscMessage::checkOscAddressAndTypeTags(const char* address, const char
   return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
 }
 
+bool MicroOscMessage::checkSource(const MicroOsc& source) {
+  return (this->source == &source);
+}
+
 /*
 bool MicroOscMessage::fullMatch(const char* address) {
   return checkOscAddress(address);
