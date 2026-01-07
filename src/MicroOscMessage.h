@@ -16,7 +16,10 @@ class MicroOscMessage
 		float floatValue;
 	};
 
-
+	union IntDoubleUnion {
+		uint64_t intValue;
+		double   doubleValue;
+	};
 
 protected:
 	MicroOsc *source;
@@ -91,6 +94,12 @@ public:
 	 * Does not check buffer bounds.
 	 */
 	float nextAsFloat();
+
+	/**
+	 * Returns the next argument as a 64-bit double.
+	 * Does not check buffer bounds.
+	 */
+	double nextAsDouble();
 
 	/**
 	 * Treats the next argument as a C string and returns a pointer to the data,

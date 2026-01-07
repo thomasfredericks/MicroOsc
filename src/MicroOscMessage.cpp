@@ -29,6 +29,16 @@ float MicroOscMessage::nextAsFloat() {
   return u.floatValue;
 }
 
+double MicroOscMessage::nextAsDouble() {
+  // convert from big-endian (network byte order)
+  const uint64_t iBE = *((uint64_t *) marker);
+  marker += 8;
+
+  IntDoubleUnion u;
+  u.intValue = uOsc_bigEndian(iBE);
+
+  return u.doubleValue;
+}
 
 const char* MicroOscMessage::nextAsString() {
   int i = (int) strlen((const char*)marker);
