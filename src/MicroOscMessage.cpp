@@ -49,6 +49,10 @@ const char* MicroOscMessage::nextAsString() {
   return s;
 }
 
+const char * MicroOscMessage::getAddress() {
+  return (const char *) buffer;
+}
+
 void MicroOscMessage::copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength) {
   strncpy(destinationBuffer, (const char *) buffer, destinationBufferMaxLength);
 }

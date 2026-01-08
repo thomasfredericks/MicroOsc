@@ -54,6 +54,11 @@ public:
 	{
 		return checkOscAddressAndTypeTags(address, typetags);
 	};
+    
+	/**
+	 * Returns a pointer to the address.
+	 */
+	const char * getAddress();
 
 	/**
 	 * Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength.
