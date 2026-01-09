@@ -12,24 +12,48 @@ class MicroOscMessage
 
 	union IntFloatUnion
 	{
-		uint32_t intValue;
-		float floatValue;
+		uint32_t int_value_;
+		float float_value_;
 	};
 
-	union IntDoubleUnion {
-		uint64_t intValue;
-		double   doubleValue;
+	union IntDoubleUnion
+	{
+		uint64_t int_value_;
+		double double_value_;
 	};
 
 protected:
-	MicroOsc *source;
-	char *format;		   // a pointer to the format field
-	unsigned char *marker; // the current read head
-	unsigned char *buffer; // the original message data (also points to the address)
-	uint32_t bufferLength; // length of the buffer data
+	
+	char *format_;			 // a pointer to the format field
+	char *format_marker_;	 // the current format read head
+	unsigned char *marker_;	 // the current read head
+	unsigned char *buffer_;	 // the original message data (also points to the address)
+	uint32_t buffer_length_; // length of the buffer data
+
+private:
+	void advance(uint32_t bytes)
+	{
+		marker_ += bytes;
+		format_marker_++;
+	}
 
 public:
 	MicroOscMessage();
+
+	/**
+	 * Parses an OSC message from a buffer.
+	 * Returns 0 if there is no error. An error code (a negative number) otherwise.
+	 * The contents of the buffer is NOT copied.
+	 */
+	int parseMessage(unsigned char  *buffer, const size_t bufferLength);
+
+	/**
+	 * Returns the current type tag without advancing the read head
+	 */
+	char getTypeTag()
+	{
+		return *format_marker_;
+	}
 
 	/**
 	 * Returns `true` if the address matches exactly
@@ -41,10 +65,7 @@ public:
 	 */
 	bool checkOscAddressAndTypeTags(const char *address, const char *typetags);
 
-	/**
-	 * Returns `true` if the source matches.
-	 */
-	bool checkSource(const MicroOsc& source);
+
 
 	/**
 	 * Returns `true` if the address and argument type tags match exactly.
@@ -54,11 +75,6 @@ public:
 	{
 		return checkOscAddressAndTypeTags(address, typetags);
 	};
-    
-	/**
-	 * Returns a pointer to the address.
-	 */
-	const char * getAddress();
 
 	/**
 	 * Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength.

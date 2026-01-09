@@ -196,50 +196,50 @@ MicroOsc::MicroOsc(Print* output) {
 
 
 // http://opensoundcontrol.org/spec-1_0
-void MicroOsc::parseMessages(tOscCallbackFunction callback, unsigned char *buffer, const size_t bufferLength) {
+void MicroOsc::parseMessages(MicroOscCallback callback, unsigned char *buffer, const size_t bufferLength) {
 
   if ( callback == NULL ) return;
 
   // Check for bundles
   if (isABundle(buffer)) {
-
     parseBundle(buffer, bufferLength);
     timetag = parseBundleTimeTag();
     //isPartOfABundle = true;
-
     while ( getNextMessage()) {
       callback(message);
     }
   } else {
     timetag = 0;
     //isPartOfABundle = false;
-    if ( parseMessage(buffer, bufferLength) == 0 ) callback(message);
+    if ( message.parseMessage(buffer, bufferLength) == 0 ) {
+      callback(message);
+    }
   }
 
 }
 
-int MicroOsc::parseMessage(unsigned char  *buffer, const size_t bufferLength) {
-  // NOTE(mhroth): if there's a comma in the address, that's weird
-  size_t i = 0;
-  while (buffer[i] != '\0') ++i; // find the null-terimated address
-  while (buffer[i] != ',') ++i; // find the comma which starts the format string
-  if (i >= bufferLength) return -1; // error while looking for format string
-  // format string is null terminated
-  message.format = (char*)(buffer + i + 1); // format starts after comma
+void MicroOsc::parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, const size_t bufferLength) {
 
-  while (i < bufferLength && buffer[i] != '\0') ++i;
-  if (i == bufferLength) return -2; // format string not null terminated
+  if ( callback == NULL ) return;
 
-  i = (i + 4) & ~0x3; // advance to the next multiple of 4 after trailing '\0'
-  message.marker = buffer + i;
+  // Check for bundles
+  if (isABundle(buffer)) {
+    parseBundle(buffer, bufferLength);
+    timetag = parseBundleTimeTag();
+    //isPartOfABundle = true;
+    while ( getNextMessage()) {
+      callback(*this, message);
+    }
+  } else {
+    timetag = 0;
+    //isPartOfABundle = false;
+    if ( message.parseMessage(buffer, bufferLength) == 0 ) {
+      callback(*this, message);
+    }
+  }
 
-  message.buffer = buffer;
-  message.bufferLength = bufferLength;
-
-  message.source = this;
-
-  return 0;
 }
+
 
 
 /*
@@ -277,7 +277,7 @@ bool MicroOsc::getNextMessage() {
   uint32_t lenBE = *((uint32_t *) bundle.marker);
   uint32_t bufferLength = uOsc_bigEndian(lenBE);
 
-  parseMessage(bundle.marker + 4, bufferLength);
+  message.parseMessage(bundle.marker + 4, bufferLength);
   bundle.marker += (4 + bufferLength); // move marker to next bundle element
   return true;
 }

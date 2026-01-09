@@ -1,104 +1,129 @@
 #include "MicroOscMessage.h"
 #include "MicroOscUtility.h"
 
-MicroOscMessage::MicroOscMessage() {
-
+MicroOscMessage::MicroOscMessage()
+{
 }
 
-int32_t MicroOscMessage::nextAsInt() {
+int32_t MicroOscMessage::nextAsInt()
+{
   // convert from big-endian (network btye order)
-  const int32_t iBE = *((int32_t *) marker);
-  const int32_t i  = uOsc_bigEndian(iBE);
-
-  marker += 4;
+  const int32_t iBE = *((int32_t *)marker_);
+  const int32_t i = uOsc_bigEndian(iBE);
+  // marker += 4;
+  advance(4);
   return i;
 }
 
+int MicroOscMessage::parseMessage(unsigned char *buffer, const size_t bufferLength)
+{
+  // NOTE(mhroth): if there's a comma in the address, that's weird
+  size_t i = 0;
+  while (buffer[i] != '\0')
+    ++i; // find the null-terimated address
+  while (buffer[i] != ',')
+    ++i; // find the comma which starts the format string
+  if (i >= bufferLength)
+    return -1; // error while looking for format string
+  // format string is null terminated
+  format_ = (char *)(buffer + i + 1); // format starts after comma
+  format_marker_ = format_;
 
-float MicroOscMessage::nextAsFloat() {
+  while (i < bufferLength && buffer[i] != '\0')
+    ++i;
+  if (i == bufferLength)
+    return -2; // format string not null terminated
+
+  i = (i + 4) & ~0x3; // advance to the next multiple of 4 after trailing '\0'
+  marker_ = buffer + i;
+
+  buffer_ = buffer;
+  buffer_length_ = bufferLength;
+
+
+
+  return 0;
+}
+
+float MicroOscMessage::nextAsFloat()
+{
   // convert from big-endian (network btye order)
-  const uint32_t iBE = *((uint32_t *) marker);
-  marker += 4;
+  const uint32_t iBE = *((uint32_t *)marker_);
+  // marker += 4;
+  advance(4);
   /*
     const uint32_t i  = uOsc_bigEndian(iBE);
     return *((float *) (&i)); // HARD CAST TO FLOAT
     */
   union IntFloatUnion u;
-  u.intValue = uOsc_bigEndian(iBE);
+  u.int_value_ = uOsc_bigEndian(iBE);
 
-  return u.floatValue;
+  return u.float_value_;
 }
 
-double MicroOscMessage::nextAsDouble() {
+double MicroOscMessage::nextAsDouble()
+{
   // convert from big-endian (network byte order)
-  const uint64_t iBE = *((uint64_t *) marker);
-  marker += 8;
+  const uint64_t iBE = *((uint64_t *)marker_);
+  // marker += 8;
+  advance(8);
 
-  IntDoubleUnion u;
-  u.intValue = uOsc_bigEndian(iBE);
+  union IntDoubleUnion u;
+  u.int_value_ = uOsc_bigEndian(iBE);
 
-  return u.doubleValue;
+  return u.double_value_;
 }
 
-const char* MicroOscMessage::nextAsString() {
-  int i = (int) strlen((const char*)marker);
-  if (marker + i >= buffer + bufferLength) return NULL;
-  const char *s = (const char*)marker;
+const char *MicroOscMessage::nextAsString()
+{
+  int i = (int)strlen((const char *)marker_);
+  if (marker_ + i >= buffer_ + buffer_length_)
+    return NULL;
+  const char *s = (const char *)marker_;
   i = (i + 4) & ~0x3; // advance to next multiple of 4 after trailing '\0'
-  marker += i;
+  // marker_ += i;
+  advance(i);
   return s;
 }
 
-const char * MicroOscMessage::getAddress() {
-  return (const char *) buffer;
+void MicroOscMessage::copyAddress(char *destinationBuffer, size_t destinationBufferMaxLength)
+{
+  strncpy(destinationBuffer, (const char *)buffer_, destinationBufferMaxLength);
 }
 
-void MicroOscMessage::copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength) {
-  strncpy(destinationBuffer, (const char *) buffer, destinationBufferMaxLength);
+void MicroOscMessage::copyTypeTags(char *destinationBuffer, size_t destinationBufferMaxLength)
+{
+  strncpy(destinationBuffer, (const char *)format_, destinationBufferMaxLength);
 }
 
-void MicroOscMessage::copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength) {
-  strncpy(destinationBuffer, (const char *) format, destinationBufferMaxLength);
+bool MicroOscMessage::checkOscAddress(const char *address)
+{
+  return (strcmp((const char *)buffer_, address) == 0);
 }
 
-
-
-bool MicroOscMessage::checkOscAddress(const char* address) {
-  return (strcmp( (const char *) buffer, address) == 0);
+bool MicroOscMessage::checkOscAddressAndTypeTags(const char *address, const char *typetags)
+{
+  return (strcmp((const char *)buffer_, address) == 0) && (strcmp((const char *)format_, typetags) == 0);
 }
 
+uint32_t MicroOscMessage::nextAsBlob(const unsigned char **blob)
+{
 
-bool MicroOscMessage::checkOscAddressAndTypeTags(const char* address, const char * typetags) {
-  return (strcmp( (const char*) buffer, address) == 0) && (strcmp( (const char*) format, typetags) == 0) ;
-}
-
-bool MicroOscMessage::checkSource(const MicroOsc& source) {
-  return (this->source == &source);
-}
-
-/*
-bool MicroOscMessage::fullMatch(const char* address) {
-  return checkOscAddress(address);
-}
-*/
-/*
-bool MicroOscMessage::fullMatch(const char* address, const char * typetags) {
-  return checkOscAddress(address, typetags);
-}
-*/
-uint32_t MicroOscMessage::nextAsBlob( const unsigned char  **blob) {
-
-  const uint32_t iBE = *((uint32_t *) marker);
+  const uint32_t iBE = *((uint32_t *)marker_);
 
   uint32_t length = 0;
-  uint32_t i  = uOsc_bigEndian(iBE);
+  uint32_t i = uOsc_bigEndian(iBE);
 
-  if (marker + 4 + i <= buffer + bufferLength) { // not bigger than stored data
+  if (marker_ + 4 + i <= buffer_ + buffer_length_)
+  {             // not bigger than stored data
     length = i; // length of blob
-    *blob = marker + 4;
+    *blob = marker_ + 4;
     i = (i + 7) & ~0x3;
-    marker += i;
-  } else {
+    // marker_ += i;
+    advance(i);
+  }
+  else
+  {
     length = 0;
     *blob = NULL;
   }
@@ -106,33 +131,18 @@ uint32_t MicroOscMessage::nextAsBlob( const unsigned char  **blob) {
   return length;
 }
 
-int MicroOscMessage::nextAsMidi( const unsigned char  **midiData) {
+int MicroOscMessage::nextAsMidi(const unsigned char **midiData)
+{
 
-  if (marker + 4  <= buffer + bufferLength) {
-    *midiData = marker;
-    marker += 4;
+  if (marker_ + 4 <= buffer_ + buffer_length_)
+  {
+    *midiData = marker_;
+    // marker += 4;
+    advance(4);
     return 4;
-  } else {
+  }
+  else
+  {
     return 0;
   }
 }
-
-
-
-
-/*
-size_t MicroOscMessage::nextAsBlob( const unsigned char  **blob, size_t maxLength) {
-  size_t i = (size_t) ntohl(*((uint32_t *) message.marker)); // get the blob length
-  if (i <= maxLength &&  message.marker + 4 + i <= message.buffer + message.bufferLength) {
-    size_t bufferLength = i; // length of blob
-    *blob = message.marker + 4;
-    i = (i + 7) & ~0x3;
-    message.marker += i;
-    return bufferLength;
-  } else {
-
-    *blob = NULL;
-    return 0;
-  }
-}
-*/

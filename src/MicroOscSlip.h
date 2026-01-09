@@ -30,8 +30,6 @@ protected:
   }
 
 public:
-
-
   MicroOscSlip(Stream *stream) : MicroOsc(&slip_), slip_(stream)
   {
   }
@@ -39,9 +37,18 @@ public:
   MicroOscSlip(Stream &stream) : MicroOsc(&slip_), slip_(&stream)
   {
   }
-  
 
-  virtual void onOscMessageReceived(tOscCallbackFunction callback)
+  void onOscMessageReceived(MicroOscCallback callback) override
+  {
+
+    size_t packetLength = slip_.parsePacket(input_buffer_, MICRO_OSC_IN_SIZE);
+    if (packetLength > 0)
+    {
+      MicroOsc::parseMessages(callback, input_buffer_, packetLength);
+    }
+  }
+
+  void onOscMessageReceived(MicroOscCallbackWithSource callback) override
   {
 
     size_t packetLength = slip_.parsePacket(input_buffer_, MICRO_OSC_IN_SIZE);
@@ -52,7 +59,7 @@ public:
   }
 
   [[deprecated("Use onOscMessageReceived(callback) instead.")]]
-  void receiveMessages(tOscCallbackFunction callback)
+  void receiveMessages(MicroOscCallback callback)
   {
     onOscMessageReceived(callback);
   }

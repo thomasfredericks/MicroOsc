@@ -1,11 +1,11 @@
-/* MicroOscUdp
- * By Thomas O Fredericks (tof@tofstuff.com) 
- */
-
-//#define MICRO_OSC_DEBUG 
-
 #ifndef _MICRO_OSC_UDP_
 #define _MICRO_OSC_UDP_
+
+/*
+  MicroOscUdp
+  By Thomas O Fredericks (tof@tofstuff.com) 
+ */
+
 
 #include <MicroOsc.h>
 #include <Udp.h>
@@ -64,15 +64,19 @@ class MicroOscUdp : public MicroOsc {
     }
 
 
-    virtual void onOscMessageReceived(tOscCallbackFunction callback) {
+    void onOscMessageReceived(MicroOscCallback callback) override {
       size_t packetLength = udp->parsePacket();
       if ( packetLength > 0 ) {
         packetLength = udp->read(inputBuffer, MICRO_OSC_IN_SIZE);
-		
-        #ifdef MICRO_OSC_DEBUG    
-        Serial.print("MICRO_OSC_DEBUG Received UDP bytes: ");
-        Serial.println(packetLength);
-        #endif
+      	
+        MicroOsc::parseMessages( callback , inputBuffer , packetLength);
+      }
+    }
+
+      void onOscMessageReceived(MicroOscCallbackWithSource callback) override {
+      size_t packetLength = udp->parsePacket();
+      if ( packetLength > 0 ) {
+        packetLength = udp->read(inputBuffer, MICRO_OSC_IN_SIZE);
       	
         MicroOsc::parseMessages( callback , inputBuffer , packetLength);
       }
