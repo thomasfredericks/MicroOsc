@@ -83,7 +83,7 @@ class MicroOscUdp : public MicroOsc {
     }
 
     [[deprecated("Use onOscMessageReceived(callback) instead.")]]
-    void receiveMessages(tOscCallbackFunction callback) {
+    void receiveMessages(MicroOscCallback callback) {
         onOscMessageReceived(callback);
     }
 
