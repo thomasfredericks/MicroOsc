@@ -59,7 +59,7 @@ public:
 	 * Returns the OSC address of the message
 	 * The returned value is valid only until the next received message. DO NOT STORE IT.
 	 */
-	const char * getOscAddress(const char *address);
+	const char * getOscAddress();
 
 	/**
 	 * Returns `true` if the address matches exactly

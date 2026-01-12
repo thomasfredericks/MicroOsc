@@ -86,7 +86,7 @@ const char *MicroOscMessage::nextAsString()
   return s;
 }
 
-const char *MicroOscMessage::getOscAddress(const char *address)
+const char *MicroOscMessage::getOscAddress()
 {
   return (const char *)buffer_;
 }
