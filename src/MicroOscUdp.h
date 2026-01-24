@@ -13,13 +13,13 @@
 
 template <const size_t MICRO_OSC_IN_SIZE>
 class MicroOscUdp : public MicroOsc {
-
+protected:
     UDP* udp;
     unsigned char inputBuffer[MICRO_OSC_IN_SIZE];
     IPAddress destinationIp = INADDR_NONE;
     unsigned int destinationPort;
 
-    protected:
+protected:
 	virtual void beginMessage() {
     /*
     Serial.print("Begin UDP OSC IP: ");
