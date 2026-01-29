@@ -11,7 +11,7 @@
 template <const size_t MICRO_OSC_IN_SIZE>
 class MicroOscSlip : public MicroOsc
 {
-
+protected:
   MicroSlip slip_;
   unsigned char input_buffer_[MICRO_OSC_IN_SIZE];
 
