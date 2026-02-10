@@ -48,9 +48,9 @@ public:
 	int parseMessage(unsigned char  *buffer, const size_t bufferLength);
 
 	/**
-	 * Returns the current type tag without advancing the read head
+	 * Returns the type tag of the argument returned next without advancing the read head
 	 */
-	char getTypeTag()
+	char nextTypeTag()
 	{
 		return *format_marker_;
 	}
