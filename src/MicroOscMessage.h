@@ -48,11 +48,12 @@ public:
 	int parseMessage(unsigned char  *buffer, const size_t bufferLength);
 
 	/**
-	 * Returns the type tag of the argument returned next without advancing the read head
+	 * Returns type tags 
+	 * The returned value is valid only until the next received message. DO NOT STORE IT.
 	 */
-	char nextTypeTag()
+	const char * getTypeTags()
 	{
-		return *format_marker_;
+		return format_marker_;
 	}
 
 	/**
