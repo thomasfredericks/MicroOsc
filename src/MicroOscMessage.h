@@ -31,10 +31,10 @@ protected:
 	uint32_t buffer_length_; // length of the buffer data
 
 private:
-	void advance(uint32_t bytes)
+	inline void advance(uint32_t bytes)
 	{
 		marker_ += bytes;
-		format_marker_++;
+		//format_marker_++;
 	}
 
 public:
