@@ -36,8 +36,8 @@ private:
 	// uOscBundle* b;
 	// tosc_message* o;
 	MicroOscMessage message;
-	//MicroOscCallback callback;
-	//MicroOscCallbackWithSource callbackWithSource;
+	// MicroOscCallback callback;
+	// MicroOscCallbackWithSource callbackWithSource;
 	uint64_t timetag;
 	// bool isPartOfABundle;
 	const uint8_t nullChar = '\0';
@@ -76,30 +76,59 @@ private:
 	bool getNextMessage();
 
 protected:
-	void padTheSize();
+	void pad();
 	void writeAddress(const char *address);
 	void writeFormat(const char *format);
-	void writeInt(int32_t i);
-	void writeFloat(float f);
-	void writeString(const char *str);
-	void writeBlob(unsigned char *b, int32_t length);
-	void writeDouble(double d);
-	void writeMidi(const unsigned char *midi);
-	void writeInt64(uint64_t h);
+
 
 private:
 	void writeMessage(const char *address, const char *format, va_list ap);
 	// void vprint(const char *address, const char *format, va_list ap);
 
 protected:
-	virtual void beginMessage() = 0;
-	virtual void endMessage() = 0;
-	virtual bool readyToSendMessage() = 0;
+	virtual void transportBegin() = 0;
+	virtual void transportEnd() = 0;
+	virtual bool transportReady() = 0;
 
 private:
 	void sendWithoutArguments(const char *address, const char *type);
 
 public:
+	void messageAddInt(int32_t i);
+	void messageAddFloat(float f);
+	void messageAddString(const char *str);
+	void messageAddBlob(unsigned char *b, int32_t length);
+	void messageAddDouble(double d);
+	void messageAddMidi(const unsigned char *midi);
+	void messageAddInt64(uint64_t h);
+
+	void messageBegin(const char *address, const char *format)
+	{
+		transportBegin();
+		writeAddress(address);
+		writeFormat(format);
+	}
+
+	void messageEnd()
+	{
+		transportEnd();
+	}
+
+	void messageAddInt(int32_t i)
+	{
+		messageAddInt(i);
+	}
+
+	void messageAddFloat(float f)
+	{
+		messageAddFloat(f);
+	}
+
+	void messageAddString(const char *str)
+	{
+		messageAddString(str);
+	}
+
 	/**
 	 * Check for messages and execute callback for every received message
 	 */
