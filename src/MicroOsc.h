@@ -29,35 +29,13 @@ private:
 		// size_t bufLen; // the byte length of the original buffer
 		int32_t bundleLen; // the byte length of the total bundle
 	};
-
-	// unsigned char *buffer;
-	// int len;
 	struct uOscBundle bundle;
-	// uOscBundle* b;
-	// tosc_message* o;
 	MicroOscMessage message;
-	// MicroOscCallback callback;
-	// MicroOscCallbackWithSource callbackWithSource;
 	uint64_t timetag;
-	// bool isPartOfABundle;
 	const uint8_t nullChar = '\0';
 	Print *output;
 	uint32_t outputWritten = 0;
 
-public:
-	/*!
-	@brief  Create an instance of the MicroOsc class.
-	*/
-	MicroOsc(Print *output);
-
-	/**
-	 * Parse a buffer containing an OSC message or OSC bundle.
-	 * The contents of the buffer are NOT copied.
-	 * Calls the callback for every message received in a bundle or not.
-	 */
-	void parseMessages(MicroOscCallback callback, unsigned char *buffer, const size_t len);
-
-	void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, const size_t len);
 
 private:
 	uint64_t parseBundleTimeTag();
@@ -83,17 +61,27 @@ protected:
 
 private:
 	void writeMessage(const char *address, const char *format, va_list ap);
-	// void vprint(const char *address, const char *format, va_list ap);
+	void sendWithoutArguments(const char *address, const char *type);
 
 protected:
 	virtual void transportBegin() = 0;
 	virtual void transportEnd() = 0;
 	virtual bool transportReady() = 0;
 
-private:
-	void sendWithoutArguments(const char *address, const char *type);
-
 public:
+	/*!
+	@brief  Create an instance of the MicroOsc class.
+	*/
+	MicroOsc(Print *output);
+
+	/**
+	 * Parse a buffer containing an OSC message or OSC bundle.
+	 * The contents of the buffer are NOT copied.
+	 * Calls the callback for every message received in a bundle or not.
+	 */
+	void parseMessages(MicroOscCallback callback, unsigned char *buffer, const size_t len);
+	void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, const size_t len);
+
 	void messageAddInt(int32_t i);
 	void messageAddFloat(float f);
 	void messageAddString(const char *str);
@@ -112,21 +100,6 @@ public:
 	void messageEnd()
 	{
 		transportEnd();
-	}
-
-	void messageAddInt(int32_t i)
-	{
-		messageAddInt(i);
-	}
-
-	void messageAddFloat(float f)
-	{
-		messageAddFloat(f);
-	}
-
-	void messageAddString(const char *str)
-	{
-		messageAddString(str);
 	}
 
 	/**
