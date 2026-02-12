@@ -45,7 +45,7 @@ void MicroOsc::writeFormat(const char *format) {
 }
 
 void MicroOsc::messageAddInt(int32_t int32) {
-  int32_t networkInt32 = uOsc_bigEndian(int32);
+  int32_t networkInt32 = swapBigEndian32(int32);
   //int32_t v32 = htonl(v);
   uint8_t * ptr = (uint8_t *) &networkInt32;
   output->write(ptr, 4);
@@ -53,14 +53,14 @@ void MicroOsc::messageAddInt(int32_t int32) {
 }
 
 void MicroOsc::messageAddFloat(float f) {
-  float v32 = uOsc_bigEndian(f);
+  float v32 = swapBigEndian32(f);
   uint8_t * ptr = (uint8_t *) &v32;
   output->write(ptr, 4);
   outputWritten += 4;
 }
 
 void MicroOsc::messageAddDouble(double d) {
-  double v64 = uOsc_bigEndian(d);
+  double v64 = swapBigEndian64(d);
   uint8_t * ptr = (uint8_t *) &v64;
   output->write(ptr, sizeof(double));
   outputWritten += sizeof(double);
@@ -78,7 +78,7 @@ void MicroOsc::messageAddString(const char *str) {
 
 void MicroOsc::messageAddBlob( unsigned char *b, int32_t length) {
   // Replace following three lines with messageAddInt
-  uint32_t n32 = uOsc_bigEndian(length);
+  uint32_t n32 = swapBigEndian32(length);
   uint8_t * ptr = (uint8_t *) &n32;
   output->write(ptr, 4);
   output->write(b, length);
@@ -92,7 +92,7 @@ void MicroOsc::messageAddMidi(const unsigned char *midi) {
 }
 
 void MicroOsc::messageAddInt64(uint64_t h) {
-  const uint64_t tBE = uOsc_bigEndian(h);
+  const uint64_t tBE = swapBigEndian64(h);
   uint8_t * ptr = (uint8_t *) &tBE;
   output->write(ptr, 8);
   outputWritten += 8;
@@ -240,7 +240,7 @@ void MicroOsc::parseMessages(MicroOscCallbackWithSource callback, unsigned char 
 
 uint64_t MicroOsc::parseBundleTimeTag() {
   uint64_t timeTag = *((uint64_t *) (bundle.buffer + 8));
-  return uOsc_bigEndian(timeTag);
+  return swapBigEndian64(timeTag);
 }
 
 
@@ -265,7 +265,7 @@ bool MicroOsc::getNextMessage() {
   if ((int32_t)(bundle.marker - bundle.buffer) >= bundle.bundleLen) return false;
 
   uint32_t lenBE = *((uint32_t *) bundle.marker);
-  uint32_t bufferLength = uOsc_bigEndian(lenBE);
+  uint32_t bufferLength = swapBigEndian32(lenBE);
 
   message.parseMessage(bundle.marker + 4, bufferLength);
   bundle.marker += (4 + bufferLength); // move marker to next bundle element

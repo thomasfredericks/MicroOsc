@@ -16,7 +16,7 @@
  if the system is little endian, it will flip the bits
  if the system is big endian, it'll do nothing
  */
-template<typename T>
+/* template<typename T>
 static inline T uOsc_bigEndian(const T& x)
 {
   const int one = 1;
@@ -30,5 +30,26 @@ static inline T uOsc_bigEndian(const T& x)
     *dst++ = *src--;
   }
   return ret;
+} */
+
+#include <stdint.h>
+
+static inline int32_t swapBigEndian32(int32_t x)
+{
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    return __builtin_bswap32(x);
+#else
+    return x;
+#endif
 }
+
+static inline int64_t swapBigEndian64(int64_t x)
+{
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+    return __builtin_bswap64(x);
+#else
+    return x;
+#endif
+}
+
 #endif

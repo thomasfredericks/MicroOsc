@@ -9,7 +9,7 @@ int32_t MicroOscMessage::nextAsInt()
 {
   // convert from big-endian (network btye order)
   const int32_t iBE = *((int32_t *)marker_);
-  const int32_t i = uOsc_bigEndian(iBE);
+  const int32_t i = swapBigEndian32(iBE);
   // marker += 4;
   advance(4);
   return i;
@@ -56,7 +56,7 @@ float MicroOscMessage::nextAsFloat()
     return *((float *) (&i)); // HARD CAST TO FLOAT
     */
   union IntFloatUnion u;
-  u.int_value_ = uOsc_bigEndian(iBE);
+  u.int_value_ = swapBigEndian32(iBE);
 
   return u.float_value_;
 }
@@ -69,7 +69,7 @@ double MicroOscMessage::nextAsDouble()
   advance(8);
 
   union IntDoubleUnion u;
-  u.int_value_ = uOsc_bigEndian(iBE);
+  u.int_value_ = swapBigEndian64(iBE);
 
   return u.double_value_;
 }
@@ -117,7 +117,7 @@ uint32_t MicroOscMessage::nextAsBlob(const unsigned char **blob)
   const uint32_t iBE = *((uint32_t *)marker_);
 
   uint32_t length = 0;
-  uint32_t i = uOsc_bigEndian(iBE);
+  uint32_t i = swapBigEndian32(iBE);
 
   if (marker_ + 4 + i <= buffer_ + buffer_length_)
   {             // not bigger than stored data
