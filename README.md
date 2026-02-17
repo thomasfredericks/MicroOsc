@@ -78,9 +78,6 @@ For WiFi:
 ```cpp
 #include <WiFiUdp.h>
 WiFiUDP myUdp;
-unsigned int myReceivePort = 8888;
-IPAddress myDestinationIp(192, 168, 1, 210);
-unsigned int myDestinationPort = 7777;
 ```
 
 For Ethernet:
@@ -88,9 +85,6 @@ For Ethernet:
 #include <Ethernet.h>
 // An EthernetUDP instance to let us send and receive packets over UDP
 EthernetUDP myUdp;
-unsigned int myReceivePort = 8888;
-IPAddress myDestinationIp(192, 168, 1, 210);
-unsigned int myDestinationPort = 7777;
 ```
 
 Include `MicroOsc` and initiliaze yout instance of `MicroOsc`.
@@ -98,6 +92,8 @@ Include `MicroOsc` and initiliaze yout instance of `MicroOsc`.
 You can initiliaze `MicroOsc` **with** the destination:
 ```cpp
 #include <MicroOscUdp.h>
+unsigned int myReceivePort = 8888;
+IPAddress myDestinationIp(192, 168, 1, 210);
 MicroOscUdp<1024> myOsc(&myUdp, myDestinationIp, myDestinationPort); // <#> : # of bytes reserved for incomming messages.
 ```
 
@@ -109,6 +105,7 @@ MicroOscUdp<1024> myOsc(&myUdp); // <#> : # of bytes reserved for incomming mess
 
 In `setup()` don't forget to start your UDP instance:
 ```cpp
+unsigned int myDestinationPort = 7777;
  myUdp.begin(myReceivePort);
 ```
 - `myReceivePort` : port number (`unsigned int`) that this device (the microcontroller) should listen to.
