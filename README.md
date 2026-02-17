@@ -4,6 +4,7 @@
 - MicroOsc provides a unified API to work over Serial (SLIP) and over UDP (Ethernet or Wifi).
 - MicroOsc does not hold on to state. Error checking is minimal.
 - MicroOsc was inspired by [TinyOSC](https://github.com/mhroth/TinyOSC) by Martin Roth.
+- Source code located at: https://github.com/thomasfredericks/MicroOsc
 
 ## Supported Features
 MicroOsc currently supports:
