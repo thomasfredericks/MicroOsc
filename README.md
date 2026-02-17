@@ -344,32 +344,46 @@ MicroOsc contains two core classes:
 | MicroOsc Method | Description |
 | --------------- | --------------- |
 | `void parseMessages(MicroOscCallback callback, unsigned char *buffer, size_t bufferLength)` | Parses OSC data contained in `buffer` and calls `callback` once for each received message. Supports bundles and single messages. |
-| `void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, size_t bufferLength)` | Same as above but also passes the `MicroOsc` instance to the callback, allowing access to additional context such as timetag or transport information. |
+| `void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, size_t bufferLength)` | Same as above but also passes the `MicroOsc` instance to the callback. |
 
-### Overview of all OSC parsing methods of MicroOscMessage
+### Basic `MicroOscMessage` methods
 
-`MicroOscMessage` reads arguments sequentially. Each call to a `nextAs*()` method advances the internal read pointer to the next argument. Arguments must be read in the same order as they were sent.
+Address and arguments types:
+| MicroOscMessage Method | Description |
+| --------------- | --------------- |
+| `bool checkOscAddress(const char* address)` | Returns `true` if the OSC address matches exactly. |
+| `bool checkOscAddressAndTypeTags(const char* address, const char* typetags)` | Returns `true` if both the OSC address and type tags match exactly. |
+
+`MicroOscMessage` reads arguments sequentially. Each call to a method that starts with the words `nextAs` advances the internal read pointer to the next argument. Arguments must be read in the same order as they were sent.
+| MicroOscMessage Method | Description |
+| --------------- | --------------- |
+| `int32_t nextAsInt()` | Returns the next argument as a 32-bit integer. Advances the internal read pointer. |
+| `float nextAsFloat()` | Returns the next argument as a 32-bit float. Advances the internal read pointer. |
+| `double nextAsDouble()` | Returns the next argument as a 64-bit double. Advances the internal read pointer. |
+| `const char* nextAsString()` | Returns the next argument as a null-terminated string pointer. Advances the internal read pointer. Returns `NULL` if buffer bounds are exceeded. |
+| `uint32_t nextAsBlob(const uint8_t **blobData)` | Returns the next argument as a blob. Fills `blobData` with the pointer to raw data. Returns blob length or 0 if error. Advances the internal read pointer. |
+| `int nextAsMidi(const uint8_t **midiData)` | Returns the next argument as a MIDI message (4 bytes). Fills `midiData` with the pointer to raw MIDI bytes. Returns 4 on success, 0 on error. Advances the internal read pointer. |
+
+### Advanced MicroOscMessage Methods
+
+Address and arguments types:
+| MicroOscMessage Method | Description |
+| --------------- | --------------- |
+| `const char* getTypeTags()` | Returns a pointer to the type tags of the message. Valid only until the next received message; do not store it. |
+| `const char* getOscAddress()` | Returns a pointer to the OSC address. Valid only until the next received message; do not store it. |
+| `bool checkOscAddress(const char* address)` | Returns `true` if the OSC address matches exactly. |
+| `void copyAddress(char* destinationBuffer, size_t destinationBufferMaxLength)` | Copies the OSC address into a user-provided buffer with maximum length. |
+| `void copyTypeTags(char* destinationBuffer, size_t destinationBufferMaxLength)` | Copies the type tags into a user-provided buffer with maximum length. |
+
+### Parsing a buffer manually with a MicroOscMessage
+
+Parsing the buffer is done automatically with `MicroOsc` and an internal `MicroOscMessage`. But if you create your own MicroMessage, you can manually parse a custom buffer.
 
 | MicroOscMessage Method | Description |
 | --------------- | --------------- |
-| `const char* getOscAddress()` | Returns a pointer to the OSC address string contained in the message. |
-| `bool checkOscAddress(const char* address)` | Returns `true` if the OSC address matches exactly. |
-| `bool checkOscAddressAndTypeTags(const char* address, const char * typetags)` | Returns `true` if both the OSC address and argument type tags match exactly. |
-| `int32_t nextAsInt()` | Returns the next argument as a 32-bit integer. |
-| `float nextAsFloat()` | Returns the next argument as a 32-bit float. |
-| `double nextAsDouble()` | Returns the next argument as a 64-bit double. |
-| `const char* nextAsString()` | Treats the next argument as a C string and returns a pointer to the internal data buffer. |
-| `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob. Writes a pointer to the blob data and returns its length in bytes. |
-| `int nextAsMidi(const uint8_t **midiData)` | Treats the next argument as a MIDI message. Writes a pointer to the 4-byte MIDI data and returns the size (4). |
+| `int parseMessage(unsigned char *buffer, size_t bufferLength)` | Parses an OSC message from a buffer. Returns 0 on success, negative value on error. The buffer is not copied. |
 
-#### Advanced MicroOscMessage methods
-
-| Advanced MicroOscMessage Method | Description |
-| --------------- | --------------- |
-| `void copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the OSC address into a user-provided buffer with a maximum length. |
-| `void copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the OSC type tags into a user-provided buffer with a maximum length. |
-
-### Overview of all sending OSC methods of MicroOsc
+### Overview of all sending OSC methods of `MicroOsc`
 
 All sending functions internally write the OSC address, type tags, arguments, and handle padding according to the OSC specification. Messages are only sent if the transport is ready.
 
