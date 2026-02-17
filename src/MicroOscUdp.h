@@ -20,7 +20,7 @@ protected:
     unsigned int destinationPort;
 
 protected:
-	virtual void beginMessage() {
+	virtual void transportBegin() {
     /*
     Serial.print("Begin UDP OSC IP: ");
     Serial.print(destinationIp);
@@ -29,14 +29,14 @@ protected:
     */
 		udp->beginPacket(destinationIp, destinationPort);
 	}
-	virtual void endMessage() {
+	virtual void transportEnd() {
     /*
     Serial.println("End UDP OSC");
     */
 		 udp->endPacket(); 
 	}
 
-  bool readyToSendMessage() {
+  bool transportReady() {
     return destinationIp != INADDR_NONE;
   }
 

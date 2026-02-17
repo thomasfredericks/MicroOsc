@@ -29,35 +29,13 @@ private:
 		// size_t bufLen; // the byte length of the original buffer
 		int32_t bundleLen; // the byte length of the total bundle
 	};
-
-	// unsigned char *buffer;
-	// int len;
 	struct uOscBundle bundle;
-	// uOscBundle* b;
-	// tosc_message* o;
 	MicroOscMessage message;
-	//MicroOscCallback callback;
-	//MicroOscCallbackWithSource callbackWithSource;
 	uint64_t timetag;
-	// bool isPartOfABundle;
 	const uint8_t nullChar = '\0';
 	Print *output;
 	uint32_t outputWritten = 0;
 
-public:
-	/*!
-	@brief  Create an instance of the MicroOsc class.
-	*/
-	MicroOsc(Print *output);
-
-	/**
-	 * Parse a buffer containing an OSC message or OSC bundle.
-	 * The contents of the buffer are NOT copied.
-	 * Calls the callback for every message received in a bundle or not.
-	 */
-	void parseMessages(MicroOscCallback callback, unsigned char *buffer, const size_t len);
-
-	void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, const size_t len);
 
 private:
 	uint64_t parseBundleTimeTag();
@@ -76,30 +54,54 @@ private:
 	bool getNextMessage();
 
 protected:
-	void padTheSize();
+	void pad();
 	void writeAddress(const char *address);
 	void writeFormat(const char *format);
-	void writeInt(int32_t i);
-	void writeFloat(float f);
-	void writeString(const char *str);
-	void writeBlob(unsigned char *b, int32_t length);
-	void writeDouble(double d);
-	void writeMidi(const unsigned char *midi);
-	void writeInt64(uint64_t h);
+
 
 private:
 	void writeMessage(const char *address, const char *format, va_list ap);
-	// void vprint(const char *address, const char *format, va_list ap);
-
-protected:
-	virtual void beginMessage() = 0;
-	virtual void endMessage() = 0;
-	virtual bool readyToSendMessage() = 0;
-
-private:
 	void sendWithoutArguments(const char *address, const char *type);
 
+protected:
+	virtual void transportBegin() = 0;
+	virtual void transportEnd() = 0;
+	virtual bool transportReady() = 0;
+
 public:
+	/*!
+	@brief  Create an instance of the MicroOsc class.
+	*/
+	MicroOsc(Print *output);
+
+	/**
+	 * Parse a buffer containing an OSC message or OSC bundle.
+	 * The contents of the buffer are NOT copied.
+	 * Calls the callback for every message received in a bundle or not.
+	 */
+	void parseMessages(MicroOscCallback callback, unsigned char *buffer, const size_t len);
+	void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, const size_t len);
+
+	void messageAddInt(int32_t i);
+	void messageAddFloat(float f);
+	void messageAddString(const char *str);
+	void messageAddBlob(unsigned char *b, int32_t length);
+	void messageAddDouble(double d);
+	void messageAddMidi(const unsigned char *midi);
+	void messageAddInt64(uint64_t h);
+
+	void messageBegin(const char *address, const char *format)
+	{
+		transportBegin();
+		writeAddress(address);
+		writeFormat(format);
+	}
+
+	void messageEnd()
+	{
+		transportEnd();
+	}
+
 	/**
 	 * Check for messages and execute callback for every received message
 	 */

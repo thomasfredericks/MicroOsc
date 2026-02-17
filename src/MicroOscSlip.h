@@ -16,15 +16,15 @@ protected:
   unsigned char input_buffer_[MICRO_OSC_IN_SIZE];
 
 protected:
-  void beginMessage()
+  void transportBegin()
   {
     slip_.beginPacket();
   }
-  void endMessage()
+  void transportEnd()
   {
     slip_.endPacket();
   }
-  bool readyToSendMessage()
+  bool transportReady()
   {
     return true;
   }
