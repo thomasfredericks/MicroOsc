@@ -1,14 +1,9 @@
 # MicroOsc
 
-MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for the Arduino frameworks that supports Arduino, Teensy, esp8266 and ESP32 platforms. 
-
-MicroOsc provides a unified API to work over Serial (SLIP) and over UDP (Ethernet or Wifi).
-
-It does not hold on to state and error checking is minimal.
-
-Examples are provided for Arduino and a few applications (Pure Data, Max, Node JS).
-
-MicroOsc was inspired by [TinyOSC](https://github.com/mhroth/TinyOSC) by Martin Roth.
+- MicroOsc is a simple and lightweight [Open Sound Control](http://opensoundcontrol.org/) (OSC) library for the Arduino frameworks that supports Arduino platforms. 
+- MicroOsc provides a unified API to work over Serial (SLIP) and over UDP (Ethernet or Wifi).
+- MicroOsc does not hold on to state. Error checking is minimal.
+- MicroOsc was inspired by [TinyOSC](https://github.com/mhroth/TinyOSC) by Martin Roth.
 
 ## Supported Features
 MicroOsc currently supports:
@@ -39,38 +34,37 @@ MicroOsc currently supports:
 
 ## Unsupported Features
 
-MicroOsc will eventually but currently does *yet* not support:
-* Send types not *yet* supported:
-  * `t`: timetag
+MicroOsc will *eventually* support:
+- bundle writing (receiving is supported)
 
-* Receive Types not *yet* supported:
-  * `h`: int64
-  * `t`: timetag
-  * `T`: true
-  * `F`: false
-  * `I`: impulse
-  * `N`: nil
+Send types not *yet* supported:
+- `t`: timetag
+
+Receive Types not *yet* supported:
+- `h`: int64
+- `t`: timetag
+- `T`: true
+- `F`: false
+- `I`: impulse
+- `N`: nil
   
 MicroOsc will probably never support:
-* bundle writing (receiving is supported)
-* timetags
-* Regular expression matching
-
+- Timetags
+- Regular expression matching
 
 
 ## Initialization  
 
-There are currently 2 supported transport protocols. Serial (with SLIP) and UDP (Ethernet or WiFi). The 2 versions are identical except for their initialization.
+There are *currently* 2 supported transport protocols that are identical except for their initialization:
+- Serial (with SLIP)
+- UDP (Ethernet or WiFi).
 
 ### OSC SLIP
 
 ```cpp
 #include <MicroOscSlip.h>
-// The number 128 between the < > below  is the maximum number of bytes reserved for incomming messages.
-// Outgoing messages are written directly to the output and do not need more reserved bytes.
-MicroOscSlip<128> myOsc(&Serial);
+MicroOscSlip<128> myOsc(&Serial); // <#> : # of bytes reserved for incomming messages.
 ```
-
 In `setup()` don't forget to start Serial:
 ```cpp
   Serial.begin(115200);
@@ -104,17 +98,13 @@ Include `MicroOsc` and initiliaze yout instance of `MicroOsc`.
 You can initiliaze `MicroOsc` **with** the destination:
 ```cpp
 #include <MicroOscUdp.h>
-// The number 1024 between the < > below  is the maximum number of bytes reserved for incomming messages.
-// Outgoing messages are written directly to the output and do not need more reserved bytes.
-MicroOscUdp<1024> myOsc(&myUdp, myDestinationIp, myDestinationPort);
+MicroOscUdp<1024> myOsc(&myUdp, myDestinationIp, myDestinationPort); // <#> : # of bytes reserved for incomming messages.
 ```
 
-Or you can also initiliaze `MicroOsc` **without** the destination (when you need to set it later):
+Or, if you need to set it alter, you can also initiliaze `MicroOsc` **without** the destination:
 ```cpp
 #include <MicroOscUdp.h>
-// The number 1024 between the < > below  is the maximum number of bytes reserved for incomming messages.
-// Outgoing messages are written directly to the output and do not need more reserved bytes.
-MicroOscUdp<1024> myOsc(&myUdp);
+MicroOscUdp<1024> myOsc(&myUdp); // <#> : # of bytes reserved for incomming messages.
 ```
 
 In `setup()` don't forget to start your UDP instance:
@@ -218,8 +208,6 @@ float floatArgument = receivedOscMessage.nextAsFloat();
 
 ####  Get next argument as a C **string** pointer
 
-**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
-
 ```cpp
 /**
 * Treats the next argument as a string and returns a pointer to the data as a C string, 
@@ -228,14 +216,14 @@ float floatArgument = receivedOscMessage.nextAsFloat();
 const char* nextAsString();
 ```
 
+**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
+
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
 const char * s = receivedOscMessage.nextAsString();
 ```
 
 #### Get next as a **byte array(blob)** 
-
-**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
 
 ```cpp
 /**
@@ -245,6 +233,7 @@ const char * s = receivedOscMessage.nextAsString();
 */
 uint32_t nextAsBlob(const uint8_t **blobData);
 ```
+**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
 
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
@@ -254,8 +243,6 @@ uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 
 ####  Get next as a **MIDI** data array
 
-**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
-
 ```cpp
 /**
 * Treats the next value as MIDI and sets a pointer with the address to the MIDI data. 
@@ -263,7 +250,8 @@ uint32_t length = receivedOscMessage.nextAsBlob(&blob);
 * MIDI data always has a length of 4. Bytes from MSB to LSB are: port id, status byte, data1, data2
 */
 int nextAsMidi(const uint8_t **midiData);
-```  
+```
+**WARNING**: Do not store the pointer returned by this function. Only use it as read only inside of the function called by `onOscMessageReceived()`.
 
 Example with a `MicroOscMessage` named `receivedOscMessage`:
 ```cpp
@@ -340,48 +328,112 @@ Example that sends a "/blub" message with a blob argument:
 uint8_t blob[4] = {1,2,3,4};
 uint32_t length = 4;
 myOsc.sendMessage("/blub", "b", blob, (int32_t) length);
-``` 
+```
+
 ## Full API
+
 ### Classes
 
-MicroOsc contains 2 classes:
-- `MicroOsc` : the main Class
-- `MicroOscMessage` : a received OSC message
+MicroOsc contains two core classes:
 
-### Overview of all OSC receiving methods of MicroOsc
-| MicroOsc  Method | Description |
+- `MicroOsc`  
+  The main OSC interface used to send and receive OSC messages. It handles message encoding, transport handling, bundle parsing, and dispatching received messages.
+
+- `MicroOscMessage`  
+  Represents a single received OSC message. It provides methods to inspect the OSC address, verify argument types, and sequentially read message arguments.
+
+### Overview of OSC receiving methods of MicroOsc
+
+| MicroOsc Method | Description |
 | --------------- | --------------- |
-| `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
-
+| `void parseMessages(MicroOscCallback callback, unsigned char *buffer, size_t bufferLength)` | Parses OSC data contained in `buffer` and calls `callback` once for each received message. Supports bundles and single messages. |
+| `void parseMessages(MicroOscCallbackWithSource callback, unsigned char *buffer, size_t bufferLength)` | Same as above but also passes the `MicroOsc` instance to the callback, allowing access to additional context such as timetag or transport information. |
 
 ### Overview of all OSC parsing methods of MicroOscMessage
+
+`MicroOscMessage` reads arguments sequentially. Each call to a `nextAs*()` method advances the internal read pointer to the next argument. Arguments must be read in the same order as they were sent.
+
 | MicroOscMessage Method | Description |
 | --------------- | --------------- |
-| `void onOscMessageReceived(callback)` | Check for messages and execute callback for every received message |
-| `bool checkOscAddress(const char* address)` | Returns `true` if the address matches exactly |
-| `bool checkOscAddressAndTypeTags(const char* address,const char * typetags)` | Returns `true` if the address and argument type tags match exactly |
-| `int32_t nextAsInt()` | Returns the next argument as a 32-bit int |
-| `float nextAsFloat()` | Returns the next argument as a 32-bit float |
-| `const char* nextAsString()` | Treats the next argument as a C string and returns a pointer to the data |
-| `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob of data and fills a pointer with the address to a byte array |
-| `int nextAsMidi(const uint8_t **midiData)` | Treats the next value as MIDI and fills a pointer with the address to the MIDI data |
+| `const char* getOscAddress()` | Returns a pointer to the OSC address string contained in the message. |
+| `bool checkOscAddress(const char* address)` | Returns `true` if the OSC address matches exactly. |
+| `bool checkOscAddressAndTypeTags(const char* address, const char * typetags)` | Returns `true` if both the OSC address and argument type tags match exactly. |
+| `int32_t nextAsInt()` | Returns the next argument as a 32-bit integer. |
+| `float nextAsFloat()` | Returns the next argument as a 32-bit float. |
+| `double nextAsDouble()` | Returns the next argument as a 64-bit double. |
+| `const char* nextAsString()` | Treats the next argument as a C string and returns a pointer to the internal data buffer. |
+| `uint32_t nextAsBlob(const uint8_t **blobData)` | Treats the next argument as a blob. Writes a pointer to the blob data and returns its length in bytes. |
+| `int nextAsMidi(const uint8_t **midiData)` | Treats the next argument as a MIDI message. Writes a pointer to the 4-byte MIDI data and returns the size (4). |
 
 #### Advanced MicroOscMessage methods
+
 | Advanced MicroOscMessage Method | Description |
 | --------------- | --------------- |
-| `void copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the address into a `char*` destinationBuffer of maximum length destinationBufferMaxLength |
-| `void copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the type tags into a `char*` destinationBuffer of maximum length destinationBufferMaxLength |
-
+| `void copyAddress(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the OSC address into a user-provided buffer with a maximum length. |
+| `void copyTypeTags(char * destinationBuffer, size_t destinationBufferMaxLength)` | Copies the OSC type tags into a user-provided buffer with a maximum length. |
 
 ### Overview of all sending OSC methods of MicroOsc
-| MicroOsc  Method | Description |
+
+All sending functions internally write the OSC address, type tags, arguments, and handle padding according to the OSC specification. Messages are only sent if the transport is ready.
+
+| MicroOsc Method | Description |
 | --------------- | --------------- |
-| `void sendInt(const char *address, int32_t i)` | Send a single int OSC message |
-| `void sendFloat(const char *address, float f);` | Send a single float OSC message |
-| `void sendString(const char *address, const char *str)` | Send a single string OSC message |
-| `void sendBlob(const char *address, unsigned char *b, int32_t length)` | Send a single blob (array of bytes) OSC message |
-| `void sendDouble(const char *address,double d)` | Send a single double OSC message |
-| `void sendMidi(const char *address,unsigned char *midi)` |  Send a single MIDI OSC message |
-| `void sendInt64(const char *address, uint64_t h)` | Send a single Int64 OSC message |
-| `void sendImpluse(const char *address)` | Send a message with no arguments |
-| `void sendMessage(const char *address, const char *format, ...)` | Send an OSC message with any mnumber of arguments of diffrent types |
+| `void sendInt(const char *address, int32_t i)` | Sends a single integer OSC message. |
+| `void sendFloat(const char *address, float f)` | Sends a single float OSC message. |
+| `void sendString(const char *address, const char *str)` | Sends a single string OSC message. |
+| `void sendBlob(const char *address, unsigned char *b, int32_t length)` | Sends a single blob (array of bytes) OSC message. |
+| `void sendDouble(const char *address, double d)` | Sends a single double OSC message. |
+| `void sendMidi(const char *address, unsigned char *midi)` | Sends a single MIDI OSC message (4 bytes). |
+| `void sendInt64(const char *address, uint64_t h)` | Sends a single 64-bit integer OSC message. |
+| `void sendImpulse(const char *address)` | Sends an OSC impulse message (no arguments, type tag `I`). |
+| `void sendTrue(const char *address)` | Sends an OSC boolean true message (type tag `T`). |
+| `void sendFalse(const char *address)` | Sends an OSC boolean false message (type tag `F`). |
+| `void sendNull(const char *address)` | Sends an OSC nil message (type tag `N`). |
+| `void sendMessage(const char *address, const char *format, ...)` | Sends an OSC message with multiple arguments. The `format` string defines argument types using OSC type tags. |
+
+### Dynamic message building
+
+These methods allow manual construction of an OSC message by explicitly starting and ending it. **The argument count and types must be managed manually; MicroOsc does not perform type or count checking.**
+
+| MicroOsc Method | Description |
+| --------------- | --------------- |
+| `void messageBegin(const char *address, const char *format)` | Begins a new OSC message. Writes the OSC address, and writes the type tag string (`format`). After this, use one or more `messageAdd*()` methods to append arguments. These calls must match the format. |
+| `void messageEnd()` | Ends the current OSC. This finalizes and sends the message through the active transport. |
+
+Methods for adding arguments to a message:
+
+| MicroOsc Method | Description |
+| --------------- | --------------- |
+| `void messageAddInt(int32_t value)` | Appends a 32-bit integer argument in big-endian format. |
+| `void messageAddFloat(float value)` | Appends a 32-bit float argument in big-endian format. |
+| `void messageAddDouble(double value)` | Appends a 64-bit double argument in big-endian format. |
+| `void messageAddString(const char *str)` | Appends a string argument. The string is null-terminated and padded to a multiple of 4 bytes. |
+| `void messageAddBlob(unsigned char *data, int32_t length)` | Appends a blob argument. Writes the length as a 32-bit integer, followed by the raw data, then pads to a multiple of 4 bytes. |
+| `void messageAddMidi(const unsigned char *midi)` | Appends a 4-byte MIDI argument. |
+| `void messageAddInt64(uint64_t value)` | Appends a 64-bit integer argument in big-endian format. |
+
+### Supported OSC type tags
+
+The following type tags are supported when sending or receiving messages:
+
+| Type Tag | Description |
+| --------------- | --------------- |
+| `i` | 32-bit integer |
+| `f` | 32-bit float |
+| `d` | 64-bit double |
+| `s` | String |
+| `b` | Blob |
+| `m` | MIDI message (4 bytes) |
+| `h` | 64-bit integer |
+| `T` | Boolean true (no argument data) |
+| `F` | Boolean false (no argument data) |
+| `N` | Nil (no argument data) |
+| `I` | Impulse (no argument data) |
+
+### Notes
+
+- OSC data is encoded using big-endian (network byte order).
+- Arguments must be read in the same order as defined by the type tags.
+- Returned pointers from `nextAsString()`, `nextAsBlob()`, and `nextAsMidi()` refer to internal buffers and must not be modified or stored beyond the lifetime of the message.
+- Bundles are automatically detected and unpacked. Each contained message triggers the callback individually.
+
