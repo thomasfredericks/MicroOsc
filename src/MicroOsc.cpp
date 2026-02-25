@@ -76,7 +76,7 @@ void MicroOsc::messageAddString(const char *str) {
 
 }
 
-void MicroOsc::messageAddBlob( unsigned char *b, int32_t length) {
+void MicroOsc::messageAddBlob( const uint8_t * b, int32_t length) {
   // Replace following three lines with messageAddInt
   uint32_t n32 = swapBigEndian32(length);
   uint8_t * ptr = (uint8_t *) &n32;
@@ -339,7 +339,7 @@ void MicroOsc::sendString(const char *address, const char *str) {
   }
 }
 
-void MicroOsc::sendBlob(const char *address, unsigned char *b, int32_t length) {
+void MicroOsc::sendBlob(const char *address, const uint8_t *b, int32_t length) {
   if ( transportReady() ) {
     transportBegin();
     writeAddress(address);

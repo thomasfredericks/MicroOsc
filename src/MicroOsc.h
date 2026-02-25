@@ -85,7 +85,7 @@ public:
 	void messageAddInt(int32_t i);
 	void messageAddFloat(float f);
 	void messageAddString(const char *str);
-	void messageAddBlob(unsigned char *b, int32_t length);
+	void messageAddBlob(const uint8_t *b, int32_t length);
 	void messageAddDouble(double d);
 	void messageAddMidi(const unsigned char *midi);
 	void messageAddInt64(uint64_t h);
@@ -147,7 +147,7 @@ public:
 	/**
 	 * Send a single blob (array of bytes) OSC message
 	 */
-	void sendBlob(const char *address, unsigned char *b, int32_t length);
+	void sendBlob(const char *address, const uint8_t *b, int32_t length);
 	/**
 	 * Send a single double OSC message
 	 */
