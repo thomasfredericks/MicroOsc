@@ -17,12 +17,23 @@
 
 #include "MicroOsc.h"
 
-void MicroOsc::pad() {
+/* void MicroOsc::pad() {
   while ( (outputWritten % 4 ) ) {
     output->write(nullChar);
     outputWritten++;
   }
+} */
+
+static const uint8_t zeroPad[4] = {0,0,0,0};
+
+void MicroOsc::pad() {
+    uint8_t pad = (4 - (outputWritten % 4)) % 4;
+    if (!pad) return;
+
+    output->write(zeroPad, pad);
+    outputWritten += pad;
 }
+
 
 void MicroOsc::writeAddress(const char *address) {
   outputWritten = 0;
