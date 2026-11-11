@@ -64,17 +64,24 @@ void MicroOsc::messageAddInt(int32_t int32) {
 }
 
 void MicroOsc::messageAddFloat(float f) {
-  float v32 = swapBigEndian32(f);
+  // Swap the raw bits (not the value) to big-endian
+  int32_t v32;
+  memcpy(&v32, &f, sizeof(v32));
+  v32 = swapBigEndian32(v32);
   uint8_t * ptr = (uint8_t *) &v32;
   output->write(ptr, 4);
   outputWritten += 4;
 }
 
 void MicroOsc::messageAddDouble(double d) {
-  double v64 = swapBigEndian64(d);
+  // Swap the raw bits (not the value) to big-endian
+  // (sizeof(d) guards platforms where double is 32-bit, e.g. AVR)
+  int64_t v64 = 0;
+  memcpy(&v64, &d, sizeof(d));
+  v64 = swapBigEndian64(v64);
   uint8_t * ptr = (uint8_t *) &v64;
-  output->write(ptr, sizeof(double));
-  outputWritten += sizeof(double);
+  output->write(ptr, sizeof(v64));
+  outputWritten += sizeof(v64);
 }
 
 void MicroOsc::messageAddString(const char *str) {
