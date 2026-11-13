@@ -52,4 +52,14 @@ static inline int64_t swapBigEndian64(int64_t x)
 #endif
 }
 
+// Prevent passing floating-point values, which would be implicitly converted
+// by value (e.g. 1.0f -> 1) instead of having their raw bits swapped.
+// Copy the bits into an integer first (see MicroOsc::messageAddFloat()).
+// These are templates so integer arguments of other types (e.g. uint32_t)
+// still resolve to the non-template functions above without ambiguity.
+template <typename T = void> int32_t swapBigEndian32(float) = delete;
+template <typename T = void> int32_t swapBigEndian32(double) = delete;
+template <typename T = void> int64_t swapBigEndian64(float) = delete;
+template <typename T = void> int64_t swapBigEndian64(double) = delete;
+
 #endif
